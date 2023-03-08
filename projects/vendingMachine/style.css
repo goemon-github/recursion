@@ -15,11 +15,11 @@
 }
 
 .slide_fadeout{
-    animation: slider-fadeout 10s ease forwards;
+    animation: slider-fadeout 5s ease forwards;
 }
 
 .slide_fadein{
-    animation: slider-fadein 10s ease forwards;
+    animation: slider-fadein 5s ease forwards;
 }
 
 @keyframes slider-fadeout {
