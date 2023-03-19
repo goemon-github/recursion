@@ -206,7 +206,6 @@ function renderEstimate(batteryName, estimate){
 */
 function brandOnChanged() {
     brandSelect.addEventListener('change', (e) =>  {
-        // モデルの表示を切り替える
         modelSelect.innerHTML = '';
         for (op of modelDict[e.target.value]) {
             renderModel(op);
