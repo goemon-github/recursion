@@ -11,7 +11,49 @@
     <title>Battry Finder Program</title>
 </head>
 <body>
+
     <h1>Battry Finder Program</h1>
-    
+    <main class="col-12 justify-content-center d-flex m-5 ">
+        <div class="col-8 m-auto ">
+
+            <label for="selectBrand" class="d-block ">Step:1 Select your brand</label>
+                <select class="mb-4" name='brand' id="brand-select">
+                    <!--
+                    <option value="Cakon">Cakon</option>
+                    <option value='Go MN'>Go MN</option>
+                    <option value='VANY'>VANY</option>
+                    -->
+                </select>
+            
+            <label for="selectModel" class="d-block">Step:2 Select your model</label>
+                <select class="mb-4" name="model" id="model-select">
+                    <!--
+                    <option value='0'>Cakon</option>
+                    <option value='1'>Go MN</option>
+                    <option value='2'>VANY</option>
+
+                    -->
+                </select>
+
+            <label for="power" class="d-block">Step:3 Input accessory power</label>
+            <input id='wattage' type="number" min="0" max="100" value="55" class="mb-4">
+
+
+            <label for="selectBrand" class="d-block" >Step:4 Choose your battey</label>
+                <div id="choose-select" class="d-flex flex-column">
+
+                </div>
+                <!--
+                <div class="bg-light d-flex justify-content-between">
+                <p>Model</p>
+                <p>test</p>
+                </div>
+                -->
+        </div>
+
+    </main>
+
+
+    <script src="script.js"></script>
 </body>
 </html>
