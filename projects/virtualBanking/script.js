@@ -1,6 +1,17 @@
+function displayNone(target) {
+    target.classList.remove('d-block');
+    target.classList.add('d-none');
+}
+
+function displayBlock(target) {
+    target.classList.remove('d-none');
+    target.classList.add('d-block');
+}
+
 const config = {
     initialForm:  document.getElementById('initial-form'),
     bankPage: document.getElementById('bankPage'),
+    sidePage: document.getElementById('sidePage'),
 }
 
 class BankAccount{
@@ -94,6 +105,7 @@ function mainBankPage(bankAccount) {
 
     menuContainer.querySelectorAll('#withdraw')[0].addEventListener('click', function () {
         alert('withdraw');
+        withdrawController();
     });
     menuContainer.querySelectorAll('#deposit')[0].addEventListener('click', function () {
         alert('deposit');
@@ -107,6 +119,97 @@ function mainBankPage(bankAccount) {
     return container;
 }
 
+function billInputSelector(title) {
+    let container = document.createElement('div');
+    container.innerHTML = 
+    `
+        <h2 class="pb-3">${title}</h2>
+        <div class="form-group row">
+            <label for="moneyWithdraw100" class="col-2 col-form-label col-form-label-sm">$100</label>
+            <div class="col-10">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="100" id="moneyWithdraw100" placeholder="5">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="moneyWithdraw50" class="col-2 col-form-label col-form-label-sm">$50</label>
+            <div class="col-10">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="50" id="moneyWithdraw50" placeholder="1">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="moneyWithdraw20" class="col-2 col-form-label col-form-label-sm">$20</label>
+            <div class="col-10">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="20" id="moneyWithdraw20" placeholder="2">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="moneyWithdraw10" class="col-2 col-form-label col-form-label-sm">$10</label>
+            <div class="col-10">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="10" id="moneyWithdraw10" placeholder="3">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="moneyWithdraw5" class="col-2 col-form-label col-form-label-sm">$5</label>
+            <div class="col-10">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="5" id="moneyWithdraw5" placeholder="1">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="moneyWithdraw1" class="col-2 col-form-label col-form-label-sm">$1</label>
+            <div class="col-10">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="1" id="moneyWithdraw1" placeholder="4">
+            </div>
+        </div>
+        <div class="text-center money-box p-3">
+            <p id="withdrawTotal">$0.00</p>
+        </div>
+    `;
+
+    return container;
+}
+
+function backNextBtn(backString, nextString) {
+    let container = document.createElement('div');
+    container.classList.add('d-flex', 'justify-content-center');
+    container.innerHTML =
+        `
+        <div class="d-flex justify-content-between">
+            <div class="col-6 pl-0">
+                <button id="withdrawGoBack" class="btn btn-outline-primary col-12">${backString}</button>
+            </div>
+            <div class="col-6 pr-0">
+                <button id="withdrawProcess" class="btn btn-primary col-12">${nextString}</button>
+            </div>
+        </div>
+    `;
+
+    return container;
+}
+
+function withdrawController() {
+    displayNone(config.bankPage);
+    displayBlock(config.sidePage);
+
+    config.bankPage.innerHTML = '';
+    config.sidePage.innerHTML = '';
+    config.sidePage.append(withdrawPage());
+}
+
+function withdrawPage() {
+    let title = 'Plase Enter The withdrawal Amount';
+    let container = document.createElement('div');
+    container.classList.add('p-5');
+
+    let withdraowContainer = document.createElement('div');
+    container.append(withdraowContainer);
+
+    withdraowContainer.append(billInputSelector(title));
+    withdraowContainer.append(backNextBtn('back', 'next'));
+
+    return container;
+}
+
+
 
 
 /*
@@ -116,3 +219,4 @@ console.log(user1);
 let user2 = new BankAccount("Jameson", "Dorsey", "jameson.dorsey@gmail.com", "saving", getRandomInteger(1,Math.pow(10,8)), "90");
 console.log(user2);
 */
+console.log(withdrawPage());
