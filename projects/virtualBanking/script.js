@@ -15,6 +15,9 @@ const config = {
 }
 
 class BankAccount{
+    maxWithdrawPercent = 0.2;
+    annualRate = 0.08;
+    
     constructor(firstName, lastName, email, type, accountNumber, money) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -29,8 +32,35 @@ class BankAccount{
         return this.firstName + " " + this.lastName;
     }
 
+    calculateWithdrawAmount(amount) {
+        let maxWithdrawAmount = Math.floor(this.money * this.maxWithdrawPercent);
+        amount = amount > maxWithdrawAmount ? maxWithdrawAmount : amount;
+
+        return amount;
+    }
+
+    withdraw(amount) {
+        this.money -= this.calculateWithdrawAmount(amount);
+        return this.money;
+    }
+
+    deposit(amount) {
+        this.money += amount;
+        return this.money;
+    }
+
+    simulateTimePassage(days) {
+        let daysPerYear = 365;
+        let profit = (this.money * Math.pow(1 + this.annualRate,  days / 365)) - this.money;
+        this.money += profit;
+        console.log(this.money, profit);
+        return profit;
+    }
+
+
     
 }
+
 
 function getRandomInteger(min, max) {
         return Math.floor(Math.random() * (max - min) + min);
@@ -104,14 +134,18 @@ function mainBankPage(bankAccount) {
     `;
 
     menuContainer.querySelectorAll('#withdraw')[0].addEventListener('click', function () {
-        alert('withdraw');
-        withdrawController();
+        sideBankSwitch();
+        config.sidePage.append(withdrawPage(bankAccount));
     });
     menuContainer.querySelectorAll('#deposit')[0].addEventListener('click', function () {
-        alert('deposit');
+        sideBankSwitch();
+        //config.sidePage.append();
+        config.sidePage.append(depositPage(bankAccount));
     });
     menuContainer.querySelectorAll('#comebacklater')[0].addEventListener('click', function () {
-        alert('comeBackLater');
+        sideBankSwitch();
+        //config.sidePage.append();
+        config.sidePage.append(comeBackLaterPage(bankAccount));
     });
 
     let container = document.createElement('div');
@@ -127,41 +161,41 @@ function billInputSelector(title) {
         <div class="form-group row">
             <label for="moneyWithdraw100" class="col-2 col-form-label col-form-label-sm">$100</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="100" id="moneyWithdraw100" placeholder="5">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="100" id="moneyWithdraw100" placeholder="5">
             </div>
         </div>
         <div class="form-group row">
             <label for="moneyWithdraw50" class="col-2 col-form-label col-form-label-sm">$50</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="50" id="moneyWithdraw50" placeholder="1">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="50" id="moneyWithdraw50" placeholder="1">
             </div>
         </div>
         <div class="form-group row">
             <label for="moneyWithdraw20" class="col-2 col-form-label col-form-label-sm">$20</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="20" id="moneyWithdraw20" placeholder="2">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="20" id="moneyWithdraw20" placeholder="2">
             </div>
         </div>
         <div class="form-group row">
             <label for="moneyWithdraw10" class="col-2 col-form-label col-form-label-sm">$10</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="10" id="moneyWithdraw10" placeholder="3">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="10" id="moneyWithdraw10" placeholder="3">
             </div>
         </div>
         <div class="form-group row">
             <label for="moneyWithdraw5" class="col-2 col-form-label col-form-label-sm">$5</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="5" id="moneyWithdraw5" placeholder="1">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="5" id="moneyWithdraw5" placeholder="1">
             </div>
         </div>
         <div class="form-group row">
             <label for="moneyWithdraw1" class="col-2 col-form-label col-form-label-sm">$1</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="1" id="moneyWithdraw1" placeholder="4">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="1" id="moneyWithdraw1" placeholder="4">
             </div>
         </div>
         <div class="text-center money-box p-3">
-            <p id="withdrawTotal">$0.00</p>
+            <p id="totalBillAmount">$0.00</p>
         </div>
     `;
 
@@ -175,10 +209,10 @@ function backNextBtn(backString, nextString) {
         `
         <div class="d-flex justify-content-between">
             <div class="col-6 pl-0">
-                <button id="withdrawGoBack" class="btn btn-outline-primary col-12">${backString}</button>
+                <button id="withdrawGoBack" class="btn btn-outline-primary col-12 back-btn">${backString}</button>
             </div>
             <div class="col-6 pr-0">
-                <button id="withdrawProcess" class="btn btn-primary col-12">${nextString}</button>
+                <button id="withdrawProcess" class="btn btn-primary col-12 next-btn">${nextString}</button>
             </div>
         </div>
     `;
@@ -186,31 +220,236 @@ function backNextBtn(backString, nextString) {
     return container;
 }
 
-function withdrawController() {
+function sideBankSwitch() {
     displayNone(config.bankPage);
     displayBlock(config.sidePage);
 
     config.bankPage.innerHTML = '';
     config.sidePage.innerHTML = '';
-    config.sidePage.append(withdrawPage());
+
 }
 
-function withdrawPage() {
+function bankReturn(bankAccount) {
+    displayNone(config.sidePage);
+    displayBlock(config.bankPage);
+    config.bankPage.append(mainBankPage(bankAccount));
+
+}
+
+function withdrawPage(bankAccount) {
     let title = 'Plase Enter The withdrawal Amount';
     let container = document.createElement('div');
     container.classList.add('p-5');
 
-    let withdraowContainer = document.createElement('div');
-    container.append(withdraowContainer);
+    let withdrawContainer = document.createElement('div');
+    container.append(withdrawContainer);
 
-    withdraowContainer.append(billInputSelector(title));
-    withdraowContainer.append(backNextBtn('back', 'next'));
+    withdrawContainer.append(billInputSelector(title));
+    withdrawContainer.append(backNextBtn('back', 'next'));
+
+    let backBtn = withdrawContainer.querySelectorAll('.back-btn').item(0);
+    backBtn.addEventListener('click',function () {
+        bankReturn(bankAccount);
+    })
+
+
+    let inputArr = withdrawContainer.querySelectorAll(".bill-input");
+    for (let i = 0; i < inputArr.length; i++){
+        inputArr[i].addEventListener('change', function () {
+            total = billSummation(inputArr, 'data-bill');
+            document.getElementById("totalBillAmount").innerHTML = total.toString();
+        });
+    }
+
+    let nextBtn = withdrawContainer.querySelectorAll('.next-btn').item(0);
+    nextBtn.addEventListener('click', function () {
+        container.innerHTML = '';
+        let configDialog = document.createElement('div');
+        let title ='The money you are going to take is ...';
+        configDialog.append(billDialog(title, inputArr, 'data-bill'));
+        container.append(configDialog);
+
+        let total = billSummation(inputArr, 'data-bill');
+
+        configDialog.innerHTML += `
+         <div class="d-flex bg-danger py-1 py-md-2 mb-3 text-white">
+             <p class="col-8 text-left rem1p5">Total to be withdrawn: </p>
+             <p class="col-4 text-right rem1p5">${bankAccount.calculateWithdrawAmount(total)}</p>
+         </div>
+        `;
+
+        let withdrawConfirmBtns = backNextBtn('Go Back', "Confirm");
+        configDialog.append(withdrawConfirmBtns);
+
+        let confirmBackBtn = withdrawConfirmBtns.querySelectorAll('.back-btn')[0];
+        let confirmNextBtn = withdrawConfirmBtns.querySelectorAll('.next-btn')[0];
+
+        confirmBackBtn.addEventListener('click', function () {
+            container.innerHTML = '';
+            container.append(withdrawContainer);
+        });
+
+        confirmNextBtn.addEventListener('click', function () {
+            bankAccount.withdraw(total);
+            bankReturn(bankAccount);
+        });
+        
+
+    });
+
+    return container;
+}
+
+function depositPage(bankAccount) {
+    let title = 'Plase Enter The Deposit Amount';
+    let container = document.createElement('div');
+    container.classList.add('p-5');
+
+    let withdrawContainer = document.createElement('div');
+    container.append(withdrawContainer);
+
+    withdrawContainer.append(billInputSelector(title));
+    withdrawContainer.append(backNextBtn('back', 'next'));
+
+    let backBtn = withdrawContainer.querySelectorAll('.back-btn').item(0);
+    backBtn.addEventListener('click',function () {
+        bankReturn(bankAccount);
+    })
+
+
+    let inputArr = withdrawContainer.querySelectorAll(".bill-input");
+    for (let i = 0; i < inputArr.length; i++){
+        inputArr[i].addEventListener('change', function () {
+            total = billSummation(inputArr, 'data-bill');
+            document.getElementById("totalBillAmount").innerHTML = total.toString();
+        });
+    }
+
+    let nextBtn = withdrawContainer.querySelectorAll('.next-btn').item(0);
+    nextBtn.addEventListener('click', function () {
+        container.innerHTML = '';
+        let configDialog = document.createElement('div');
+        let title = 'The money you are going to deposit is ...';
+        configDialog.append(billDialog(title, inputArr, 'data-bill'));
+        container.append(configDialog);
+
+        let total = billSummation(inputArr, 'data-bill');
+
+        configDialog.innerHTML += `
+         <div class="d-flex bg-danger py-1 py-md-2 mb-3 text-white">
+             <p class="col-8 text-left rem1p5">Total to be withdrawn: </p>
+             <p class="col-4 text-right rem1p5">${total}</p>
+         </div>
+        `;
+
+        let depositConfirmBtns = backNextBtn('Go Back', "Confirm");
+        configDialog.append(depositConfirmBtns);
+
+        let confirmBackBtn = depositConfirmBtns.querySelectorAll('.back-btn')[0];
+        let confirmNextBtn = depositConfirmBtns.querySelectorAll('.next-btn')[0];
+
+        confirmBackBtn.addEventListener('click', function () {
+            container.innerHTML = '';
+            container.append(withdrawContainer);
+        });
+
+        confirmNextBtn.addEventListener('click', function () {
+            bankAccount.deposit(total);
+            bankReturn(bankAccount);
+        });
+        
+    });
 
     return container;
 }
 
 
+function comeBackLaterPage(bankAccount) {
+    let title = 'How many days will you be gone?';
+    let container = document.createElement('div');
+    container.classList.add('p-5');
 
+    comeBackLaterContainer = document.createElement('div');
+    comeBackLaterContainer.classList.add('p-5');
+    container.append(comeBackLaterContainer);
+
+    comeBackLaterContainer.innerHTML = `
+        <h2 class="pb-3">${title}</h2>
+        <div class="form-group">
+            <input type="number" class="form-control" id="days-gone" placeholder="4">
+        </div>
+    `;
+
+    comeBackLaterContainer.append(backNextBtn('back', 'Confirm'));
+
+    let backBtn = comeBackLaterContainer.querySelectorAll('.back-btn').item(0);
+    let confirmNextBtn = comeBackLaterContainer.querySelectorAll('.next-btn')[0];
+
+    backBtn.addEventListener('click',function () {
+        bankReturn(bankAccount);
+    })
+    
+    confirmNextBtn.addEventListener('click', function () {
+        console.log(comeBackLaterContainer);
+        let days = comeBackLaterContainer.querySelectorAll('#days-gone')[0];
+        let daysInt = parseInt(days.value);
+        console.log(daysInt);
+        daysInt = daysInt > 0 ? daysInt : 0;
+        bankAccount.simulateTimePassage(daysInt);
+        bankReturn(bankAccount);
+    });
+
+    return container;
+
+}
+
+
+function billSummation(elementNodelist, attribute) {
+    let summation = 0;
+    for (let i = 0; i < elementNodelist.length; i++){
+        let currElement = elementNodelist[i];
+        let value = parseInt(currElement.value);
+
+        if (currElement.hasAttribute(attribute)) {
+            value *= parseInt(currElement.getAttribute(attribute))
+        }; 
+
+        if (value > 0) summation += value;
+
+    }
+
+    return summation;
+};
+
+function billDialog(title, elementNodeList, attribute) {
+    
+    let container = document.createElement('div');
+    let billElements = '';
+    for (let i = 0; i < elementNodeList.length; i++){
+        let currElement = elementNodeList[i];
+        let value = parseInt(currElement.value);
+        console.log('log', value);
+        if (value > 0) {
+            let bill = '$' + currElement.getAttribute(attribute);
+            billElements = `<p class="rem1p3 calculation-box mb-1 pr-2">${value} × ${bill}</p>`;
+        }
+
+    }
+
+    let total = billSummation(elementNodeList, attribute);
+    let totalString = `<p class="rem1p3 pr-2">total: $${total}</p>`;
+    container.innerHTML = `
+        <h2 class="pb-1">${title}</h2>
+        <div class="d-flex justify-content-center">
+            <div class="text-right col-8 px-1 calculation-box">
+            ${billElements}
+            ${totalString}
+            </div>
+        </div>
+    `;
+
+    return container;
+};
 
 /*
 let user1 = new BankAccount('Elisa', "Jonas", "elisa.jones@gmail.com", "checking", getRandomInteger(1, 1000) ,"30");
@@ -219,4 +458,3 @@ console.log(user1);
 let user2 = new BankAccount("Jameson", "Dorsey", "jameson.dorsey@gmail.com", "saving", getRandomInteger(1,Math.pow(10,8)), "90");
 console.log(user2);
 */
-console.log(withdrawPage());
