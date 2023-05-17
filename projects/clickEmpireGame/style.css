@@ -1,0 +1,42 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+
+
+:root{
+    --color-primary: #1976d2;
+}
+
+body{
+    font-family: 'DotGothic16', sans-serif;
+    letter-spacing: 3px;
+    
+}
+
+
+
+
+/* mainPage */
+.bg__primary{
+    background-color: var(--color-primary);
+}
+
+.border--bold{
+    border: 0.5rem solid rgb(255, 255, 255);
+}
+
+.mainPage__img--left{
+    width: 60%;
+}
+
+.cursor--hover{
+    cursor: pointer;
+}
+
+/* items section */
+.items__height{
+    height: 60vh;
+}
+.item__img{
+    width: 100%;
+    height:auto;
+}
