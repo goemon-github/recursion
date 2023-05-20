@@ -3,7 +3,7 @@
 
 
 :root{
-    --color-primary: #1976d2;
+    --color-bg-primary: #1976d2;
 }
 
 body{
@@ -14,10 +14,9 @@ body{
 
 
 
-
 /* mainPage */
 .bg__primary{
-    background-color: var(--color-primary);
+    background-color: var(--color-bg-primary);
 }
 
 .border--bold{
