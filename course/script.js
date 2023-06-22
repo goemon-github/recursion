@@ -221,4 +221,66 @@ function assertionTests(){
 }
 */
 
-//　問題ー手動テスト3
+//　問題ー手動テスト5
+// エラトステネスの篩を実装したがエラーがある可能性があるのでテストを行い、修正する
+/*
+function assertPredicate(predicate){
+    if(predicate) {
+        console.log("Passed the assertion test.");
+    }
+    else {
+        console.assert(predicate);
+        throw new Error('Assertion Failed.');
+    }
+}
+
+function primesUpToNCount(n) {
+    let cache = [];
+    for(let i = 0; i < n; i++) cache[i] = true;
+    // < を <=
+    for(let i = 2; i <= Math.floor(Math.sqrt(n)); i++){
+        if(!cache[i]) continue;
+        let p = 2;
+        while(i*p < n){
+            cache[i*p] = false;
+            // i から　p
+            p++;
+        }
+    }
+
+    let primeCount = 0;
+    for(let i = 2; i < cache.length; i++){
+        if(cache[i]) primeCount += 1;
+    }
+
+    return primeCount;
+}
+
+//  素数判定を行い、素数の数を数える
+function primesUpToNCountBF(n) {
+    let counter = 0;
+    for(let i = 1; i < n; i++) {
+        if(isPrime(i)) counter++;
+    }
+    return counter;
+}
+
+function isPrime(n) {
+    if(n < 2) return false;
+    for(let i = 2; i < n; i++) {
+        if(n % i == 0) return false;
+    }
+    return true;
+}
+
+function assertionTests(){
+    assertPredicate(primesUpToNCount(2) === primesUpToNCountBF(2));
+    assertPredicate(primesUpToNCount(3) ===  primesUpToNCountBF(3));
+    assertPredicate(primesUpToNCount(5) ===  primesUpToNCountBF(5));
+    assertPredicate(primesUpToNCount(10) ===  primesUpToNCountBF(10));
+    assertPredicate(primesUpToNCount(19) === primesUpToNCountBF(19));
+    assertPredicate(primesUpToNCount(25) === primesUpToNCountBF(25));
+    assertPredicate(primesUpToNCount(1000) === primesUpToNCountBF(1000));
+
+}
+*/
