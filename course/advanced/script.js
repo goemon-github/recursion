@@ -283,4 +283,160 @@ function assertionTests(){
     assertPredicate(primesUpToNCount(1000) === primesUpToNCountBF(1000));
 
 }
+
+
+*/
+
+// 動的型付け言語の静的化
+
+/*
+
+class Node{
+    constructor(data){
+        this.data = data;
+        this.next = null;
+    }
+}
+
+class Queue{
+    constructor(){
+        this.head = null;
+        this.tail = null;
+    }
+
+    peekFront(){
+        if(this.head == null) return null;
+        return this.head.data;
+    }
+
+    enqueue(data){
+        if(this.head == null){
+            this.head = new Node(data);
+        }
+        else if(this.tail == null){
+            this.tail = new Node(data);
+            this.head.next = this.tail;
+        }
+        else{
+            this.tail.next = new Node(data);
+            this.tail = this.tail.next;
+        }
+    }
+
+    dequeue(){
+        if(this.head == null) return null;
+        let temp = this.head;
+
+        if(this.head.next == null){
+            this.head = null;
+            this.tail = null;
+        }
+        else this.head = this.head.next;
+
+        return temp.data;
+    }
+}
+
+class TaskQueue{
+    constructor(){
+        this.queue = new Queue();
+    }
+
+    push(callback){
+        this.queue.enqueue(callback);
+    };
+
+    taskExists(){
+        return this.queue.peekFront() !== null;
+    }
+
+    //run メソッドは、2 つの文字列を配列を入力として受け取り、Queue 内のラムダ関数を実行します。
+    //配列の要素の数が不正確であったり、空であったりすると、エラーが投げられます。
+    //このメソッドは Queue の最初の要素をデキューし、arr の 1 番目と 2 番目の要素を引数として渡して実行します。
+    //エラーが発生した場合は、エラーを捕捉してログに記録し、空文字列を返します。
+
+   run(arr){
+    try{
+        if(arr.length !== 2) throw new Error('arr.length not 2');
+        let callback = this.queue.dequeue();
+        return callback(arr[0], arr[1]);
+        //return this.queue.dequeue()(arr[0], arr[1]);
+        
+    }catch(err){
+        console.log(err);
+        return '';
+    }
+    
+}
+    //insert メソッドは、
+    //ラムダ関数を入力として受け取り、Queue への追加するために使用されます。
+    //まず入力が 2 つの文字列を入力として受け取り、文字列を返すラムダ関数かどうかチェックします。
+    //入力が関数でない場合は、「Callback is not a function」というメッセージとともにエラーがスローされます。
+    //次に、このメソッドは、2 つのサンプル文字列 "str1" と "str2" を渡して、入力された関数をテストします。
+    //もし、関数が文字列を返さなければ、アサーションエラーを投げます。
+    //最後に、このメソッドは
+    //stringBifunctionForceDecorator() 関数を使って、
+    //入力のラムダ関数を装飾し、入力として文字列のみを受け取ることを強制します。
+    //そして、装飾されたラムダ関数を Queue に挿入します。
+
+    insert(lamda){
+        try {
+            if (typeof (lamda) !== "function") throw new Error('Callback is not a function');
+            
+            let str1 = 'test1';
+            let str2 = 'test2';
+            console.assert(typeof lamda(str1, str2) == 'string');
+        } catch (err) {
+            console.log(err);
+        }
+
+        this.queue.enqueue(stringBifunctionForceDecorator(lamda));
+    }
+}
+
+//stringBifunctionForceDecorator は、
+//引数としてコールバックを受け取ります。
+//この関数は、2 つの文字列を引数として受け取る新しい関数を返します。
+//この新しい関数は、入力が文字列であるかどうかをチェックし、
+//文字列でない場合はエラーを投げます。
+//入力が文字列であれば、入力を引数とするコールバック関数の結果を返します。
+
+function stringBifunctionForceDecorator(callback){
+return function(str1, str2){
+        if(typeof str1 !== "string" && typeof str2 !== "string") throw new Error(`WrongDataTypeArray, Not a string!`); 
+        return callback(str1, str2);
+    }
+
+}
+
+let scheduler = new TaskQueue();
+
+// 前回
+scheduler.insert(function(str1, str2){ return str1 + str2 });
+scheduler.insert(function(str1, str2){ return str1.toUpperCase() + str2});
+scheduler.insert(function(str1, str2){ return str1[0] + "." + str2[0] });
+
+scheduler.push(()=>console.log("Running the first function!!!"));
+scheduler.push(()=>console.log("Running the second function~~~"));
+scheduler.push(()=>console.log("Running the third function>>>"));
+scheduler.push(()=>console.log("Running the fourth function<<<"));
+
+while(scheduler.taskExists()) scheduler.run();
+
+// 今回
+scheduler.insert(function(str1, str2){ return str1 + str2 });
+scheduler.insert(function(str1, str2){ return str1.toUpperCase() + str2});
+scheduler.insert(function(str1, str2){ return str1[0] + "." + str2[0] });
+// scheduler.insert("not a function"); // エラー ラムダでない
+// scheduler.insert(function(str1, str2){return str1.length + str2.length}); // エラー 文字列を返さないラムダ
+
+
+// run()に引数を渡します。
+console.log(scheduler.run(["hello", "world"])); // 成功する例
+console.log(scheduler.run(["hello", "world"])); // 成功する例
+console.log(scheduler.run(["hello", "world"])); // 成功する例
+// console.log(scheduler.run(["nice", "world", "hi"]));//　エラー'InaccurateArguments'
+// console.log(scheduler.run([])); // エラー'EmptyArray'
+// console.log(scheduler.run([3, "world"]));//　エラー'WrongDataTypeArray'
+
 */
