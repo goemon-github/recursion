@@ -4,10 +4,6 @@ public class HelloWorld {
     }
 }
 
-ifatal: Unable to read current working directory: No such file or directory
-fatal: Unable to read current working directory: No such file or directory
-fatal: Unable to read current working directory: No such file or directory
-fatal: Unable to read current working directory: No such file or directory
 class Main {
     public static void main(String[] srgs) {
 
