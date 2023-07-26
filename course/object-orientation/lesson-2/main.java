@@ -1,8 +1,102 @@
+// 集約とコンポジション１
+
+
+// 他重度２
+/*
+import java.util.ArrayList;
+
+// 従業員は1人につき、1-2社に勤務にします。
+class Employee {
+    // mainJobとsecondJobは従業員が勤務する会社を表します。
+    // 従業員は最大で2つの会社で働くことができます（多重度は1-2）
+    private Company mainJob;
+    private Company secondJob;
+    
+    public Employee(Company mainJob, Company secondJob) {
+        this.mainJob = mainJob;
+        this.secondJob = secondJob;
+    }
+}
+
+class Company {
+    // 企業は、できるだけ多くの従業員の雇用が可能です。
+    // したがって、employeesは従業員のリストを保持するための動的配列です（多重度は*）
+    private ArrayList<Employee> employees;
+    
+    // 会社は1-10名の役員で運営されています。
+    // boardMembersは、会社の役員を表します。役員の数は最大10名です（多重度は1-10）
+    private BoardMember[] boardMembers = new BoardMember[10];
+
+    // 会社は親会社に属すことも、そうでないこともあります。
+    // parentCompanyは親会社を表します。親会社がない場合はnullです（多重度は0-1）
+    private Company parentCompany;
+
+    // 会社は多くの子会社を所有することがあります。
+    // subsidiariesは子会社のリストを保持するための動的配列です（多重度は*）
+    private ArrayList<Company> subsidiaries;
+    
+    public void addEmployee(Employee employee) {
+        this.employees.add(employee);
+    }
+
+    public void setBoardMember(BoardMember boardMember, int position) {
+        this.boardMembers[position] = boardMember;
+    }
+
+    public void setParentCompany(Company company) {
+        this.parentCompany = company;
+    }
+
+    public void addSubsidiary(Company company) {
+        this.subsidiaries.add(company);
+    }
+}
+
+// 役員は1-5社の会社を管理します。
+class BoardMember {
+    // companiesManagingは、役員が管理している会社の配列です。
+    // 役員は最大で5つの会社を管理できます（多重度は1-5）
+    private Company[] companiesManaging = new Company[5];
+    
+    public void setCompany(Company company, int position) {
+        this.companiesManaging[position] = company;
+    }
+}
+
+class Main{
+    public static void main(String[] args){
+        Company company1 = new Company();
+        Company company2 = new Company();
+
+        // 社員は2つの会社で働いている
+        Employee employee = new Employee(company1, company2);
+
+        company1.addEmployee(employee);
+        company2.addEmployee(employee);
+
+        // 会社1に役員がいる
+        BoardMember boardMember = new BoardMember();
+        company1.setBoardMember(boardMember, 0);
+
+        // 役員は会社2も管理している
+        boardMember.setCompany(company2, 0);
+
+        // 会社1は親会社で、会社2は子会社
+        company1.addSubsidiary(company2);
+        company2.setParentCompany(company1);
+    }
+}
+
+
+ */
+
+/*
+// 関連３
 public class Main {
     public static void main(String[] args) {
         // Personクラスを使って人物を作成
         Person person1 = new Person("John", "Doe", 30, 1.8, 75.0);
-        Person person2 = new Person("Jane", "Smith", 25, 1.65, 60.0);
+        Person person2 = new Person("Jane", "Smith", 25, 1.65, 60.0)
 
         // Walletクラスを使って財布を作成
         Wallet wallet1 = new Wallet();
@@ -339,3 +433,5 @@ class Person{
     }
 
 }
+
+ */
