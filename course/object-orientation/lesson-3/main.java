@@ -1,4 +1,498 @@
+
+// 複数のインターフェイス2
+class Main {
+    public static void personInteractsWithObject(Person p, Audible noiseObject) {
+        System.out.println(p + " will interact with " + noiseObject + " and cause it to make a noise");
+        noiseObject.makeNoise();
+        System.out.println("The noise was made at " + noiseObject.soundFrequency() + "Hz at a level of "
+                + noiseObject.soundLevel() + "dB");
+        System.out.println();
+    }
+
+    public static void personEatsEdible(Person p, Edible rawFood) {
+        System.out
+                .println(p + " will prepare and eat :" + rawFood + ". They do the following:" + rawFood.howToPrepare());
+        System.out.println("The person prepared and ate the meal. " + rawFood.calories() + " calories consumed.");
+        System.out.println();
+    }
+
+    public static void checkPhysicsobject(PhysicsObject obj) {
+        System.out.println("workToMove: " + obj.workToMove(100));
+        System.out.println();
+        System.out.println("desity: " + obj.density());
+        System.out.println();
+        System.out.println("weight: " + obj.weight());
+        System.out.println();
+    }
+
+    public static void checkLenses(Lenses obj, Edible p) {
+        int[] list = obj.lightRange();
+        System.out.println("ligthRange: " + list[0] + " " + list[1]);
+        System.out.println();
+        obj.see(p);
+
+    }
+
+    public static void main(String[] args) {
+        Person ashley = new Person("Ashley", "William", 1.8, 110, 29);
+
+        Person obj1 = new Person("Toshi", "Takemura", 1.7, 105, 41);
+        Horse obj2 = new Horse(450);
+        Cow obj3 = new Cow(1300);
+        Truck obj4 = new Truck(3230.5, 100.0, 50.0, 100.1) ;
+        Violin obj5 = new Violin();
+
+        personInteractsWithObject(ashley, obj1);
+        personInteractsWithObject(ashley, obj2);
+
+        personInteractsWithObject(ashley, obj3);
+        personEatsEdible(ashley, obj3);
+
+        checkPhysicsobject(obj4);
+        checkLenses(obj1, obj3);
+    }
+}
+
+
+interface Audible{
+    public abstract void makeNoise();
+    public abstract double soundFrequency();
+    public abstract double soundLevel();
+}
+
+interface Edible {
+    public abstract String howToPrepare();
+
+    public abstract double calories();
+}
+
+interface PhysicsObject {
+    public abstract double workToMove(double m);
+
+    public abstract double density();
+
+    public abstract double weight();
+}
+
+interface Lenses {
+    public abstract int[] lightRange();
+
+
+    public abstract void see(Edible object);
+}
+
+
+// ここから開発してください
+class Person implements Audible, Lenses{
+    private String firstName;
+    private String lastName;
+    private double heightM;
+    private double weightKg;
+    private int age;
+
+    public Person(String firstName, String lastName, double heightM, double weightKg, int age){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.heightM = heightM;
+        this.weightKg = weightKg;
+        this.age = age;
+    }
+
+    public String getFullName(){
+        return this.firstName + " " + this.lastName;
+    }
+
+    public String toString(){
+        return this.getFullName() + " who is " + this.heightM + "m tall and weights " + this.weightKg + "kg.";
+    }
+
+    public void makeNoise(){
+        System.out.println("Hello World!");
+    }
+
+    public double soundFrequency(){
+        return this.age > 16 ? 110 : 130;
+    }
+
+    public double soundLevel(){
+        return this.age > 16 ? 60 : 65;
+    }
+
+    public int[] lightRange(){
+        int[] lightRangeList = new int[2];
+        lightRangeList[0] = 400;
+        lightRangeList[1] = 700;
+        return lightRangeList;
+    }
+
+
+    public void see(Edible object){
+        System.out.println(object.toString());
+    }
+}
+
+class Horse implements Audible{
+    private double weightKg;
+    private double soundFrequency = 120;
+    private double soundDecibels = 75;
+
+    public Horse(double weightKg){
+        this.weightKg = weightKg;
+    } 
+
+    public String toString(){
+        return "This is a horse that weights: " + this.weightKg + "kg";
+    }
+
+    public void makeNoise(){
+        System.out.println("Neeighh!!");
+    }
+
+    public double soundFrequency(){
+        return this.soundFrequency;
+    }
+
+    public double soundLevel(){
+        return this.soundDecibels;
+    }
+
+}
+
+class Cow implements Audible, Edible{
+    private double weightKg;
+    private double soundFrequency = 90;
+    private double soundDecibels = 70;
+    
+    public Cow(double weightKg){
+        this.weightKg = weightKg;
+    } 
+
+    public String toString(){
+        return "This is a cow that weights: " + this.weightKg + "kg";
+    }
+
+    public void makeNoise(){
+        System.out.println("Moooo!!");
+    }
+
+    public double soundFrequency(){
+        return this.soundFrequency;
+    }
+
+    public double soundLevel(){
+        return this.soundDecibels;
+    }
+
+    public String howToPrepare(){
+        return "Cut the cow with a butchering knife into even pieces, and grill each piece at 220C";
+    }
+
+    public double calories(){
+        return this.weightKg * 1850;
+    }
+}
+
+class Truck implements Audible, PhysicsObject {
+    private double weightKg;
+    // 体積
+    private double valume;
+    //  質量 
+    private double mass;
+
+    private double accleration;
+
+
+    public Truck(double weightKg, double valume, double mass, double accleration) {
+        this.weightKg = weightKg;
+        this.valume = valume;
+        this.mass = mass;
+        this.accleration = accleration;
+    }
+
+    public String toString() {
+        return "This is a truck that weights: " + this.weightKg + "kg";
+    }
+
+    public void makeNoise() {
+        System.out.println("Beep Beep!!");
+    }
+
+    public double soundFrequency() {
+        return 165;
+    }
+
+    public double soundLevel() {
+        return 120;
+    }
+
+    public double workToMove(double m){
+        // 仕事 (ジュール) = 力 (ニュートン) × 距離 (メートル)
+        // 力 = 質量 × 加速度                
+        double force = mass * accleration;
+        double work = m * force;
+        return work;
+    }
+
+    public double density(){
+        return this.mass / this.valume;
+    }
+
+    public double weight(){
+        return this.weightKg * density();
+    }
+}
+
+class Violin implements Audible{
+
+    private double soundFrequency = 659.3;
+    private final static double SOUND_DECIBELS = 95;
+
+    public String toString(){
+        return "This is a violin that plays music: ";
+    }
+
+    public void makeNoise(){
+        System.out.println("Beep Beep!!");
+    }
+
+    public double soundFrequency(){
+        return this.soundFrequency;
+    }
+
+    public double soundLevel(){
+        return Violin.SOUND_DECIBELS;
+    }
+}
+
+
+
+
+// 複数のインターフェイス1
+/*
+// Audibleという名前のインターフェースを定義します。
+// 音を出すオブジェクトが持つべきメソッドを定義します。
+interface Audible{
+    public abstract void makeNoise();
+    public abstract double soundFrequency();
+    public abstract double soundLevel();
+}
+
+// Edibleという名前のインターフェースを定義します。
+// 食べられるオブジェクトが持つべきメソッドを定義します。
+interface Edible{
+    public abstract String howToPrepare();
+    public abstract double calories();
+}
+
+// PersonクラスはAudibleインターフェースを実装します。
+// そのため、makeNoise(), soundFrequency(), soundLevel()というメソッドを持つ必要があります。
+class Person implements Audible{
+    private String firstName;
+    private String lastName;
+    private double heightM;
+    private double weightKg;
+    private int age;
+
+    public Person(String firstName, String lastName, double heightM, double weightKg, int age){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.heightM = heightM;
+        this.weightKg = weightKg;
+        this.age = age;
+    }
+
+    public String getFullName(){
+        return this.firstName + " " + this.lastName;
+    }
+
+    public String toString(){
+        return this.getFullName() + " who is " + this.heightM + "m tall and weights " + this.weightKg + "kg.";
+    }
+
+    // Personが音を出すメソッドを定義します。
+    // このメソッドはAudibleインターフェースによって要求されています。
+    public void makeNoise(){
+        System.out.println("Hello World!");
+    }
+
+    // Personの音の周波数を返すメソッドを定義します。
+    // このメソッドはAudibleインターフェースによって要求されています。
+    public double soundFrequency(){
+        return this.age > 16 ? 110 : 130;
+    }
+
+    // Personの音のレベルを返すメソッドを定義します。
+    // このメソッドはAudibleインターフェースによって要求されています。
+    public double soundLevel(){
+        return this.age > 16 ? 60 : 65;
+    }
+}
+
+// HorseクラスもAudibleインターフェースを実装します。
+// Personクラスと同様に、makeNoise(), soundFrequency(), soundLevel()というメソッドを持つ必要があります。
+class Horse implements Audible{
+    private double weightKg;
+    private double soundFrequency = 120;
+    private double soundDecibels = 75;
+
+    public Horse(double weightKg){
+        this.weightKg = weightKg;
+    } 
+
+    public String toString(){
+        return "This is a horse that weights: " + this.weightKg + "kg";
+    }
+
+    // Horseが音を出すメソッドを定義します。
+    // このメソッドはAudibleインターフェースによって要求されています。
+    public void makeNoise(){
+        System.out.println("Neeighh!!");
+    }
+
+    // Horseの音の周波数を返すメソッドを定義します。
+    // このメソッドはAudibleインターフェースによって要求されています。
+    public double soundFrequency(){
+        return this.soundFrequency;
+    }
+
+    // Horseの音のレベルを返すメソッドを定義します。
+    // このメソッドはAudibleインターフェースによって要求されています。
+    public double soundLevel(){
+        return this.soundDecibels;
+    }
+}
+
+// CowクラスはAudibleとEdibleの両方のインターフェースを実装します。
+// そのため、makeNoise(), soundFrequency(), soundLevel()というメソッドと、howToPrepare(), calories()というメソッドを持つ必要があります。
+class Cow implements Audible, Edible{
+    private double weightKg;
+    private double soundFrequency = 90;
+    private double soundDecibels = 70;
+
+    public Cow(double weightKg){
+        this.weightKg = weightKg;
+    } 
+
+    public String toString(){
+        return "This is a cow that weights: " + this.weightKg + "kg";
+    }
+
+    // Cowが音を出すメソッドを定義します。
+    // このメソッドはAudibleインターフェースによって要求されています。
+    public void makeNoise(){
+        System.out.println("Moooo!!");
+    }
+
+    // Cowの音の周波数を返すメソッドを定義します。
+    // このメソッドはAudibleインターフェースによって要求されています。
+    public double soundFrequency(){
+        return this.soundFrequency;
+    }
+
+    // Cowの音のレベルを返すメソッドを定義します。
+    // このメソッドはAudibleインターフェースによって要求されています。
+    public double soundLevel(){
+        return this.soundDecibels;
+    }
+
+    // Cowの調理方法を返すメソッドを定義します。
+    // このメソッドはEdibleインターフェースによって要求されています。
+    public String howToPrepare(){
+        return "Cut the cow with a butchering knife into even pieces, and grill each piece at 220C";
+    }
+
+    // Cowのカロリーを返すメソッドを定義します。
+    // このメソッドはEdibleインターフェースによって要求されています。
+    public double calories(){
+        return this.weightKg * 1850;
+    }
+}
+
+// 以下もAudibleインターフェースを実装したクラスの例です。
+class Truck implements Audible{
+    private double weightKg;
+
+    public Truck(double weightKg){
+        this.weightKg = weightKg;
+    } 
+
+    public String toString(){
+        return "This is a truck that weights: " + this.weightKg + "kg";
+    }
+
+    public void makeNoise(){
+        System.out.println("Beep Beep!!");
+    }
+
+    public double soundFrequency(){
+        return 165;
+    }
+
+    public double soundLevel(){
+        return 120;
+    }
+}
+
+class Violin implements Audible{
+    private double soundFrequency = 659.3;
+    private final static double SOUND_DECIBELS = 95;
+
+    public String toString(){
+        return "This is a violin that plays music: ";
+    }
+
+    public void makeNoise(){
+        System.out.println("Beep Beep!!");
+    }
+
+    public double soundFrequency(){
+        return this.soundFrequency;
+    }
+
+    public double soundLevel(){
+        return Violin.SOUND_DECIBELS;
+    }
+}
+
+// Mainクラスでは、PersonクラスのインスタンスがAudibleやEdibleのインスタンスとどのように相互作用するかを定義します。
+class Main{
+    // PersonがAudibleオブジェクトとやりとりする例を示します。
+    public static void personInteractsWithObject(Person p, Audible noiseObject){
+        System.out.println(p + " will interact with " + noiseObject + " and cause it to make a noise");
+        noiseObject.makeNoise();
+        System.out.println("The noise was made at " + noiseObject.soundFrequency() + "Hz at a level of " + noiseObject.soundLevel() + "dB");
+        System.out.println();
+    }
+
+    // PersonがEdibleオブジェクトを食べる例を示します。
+    public static void personEatsEdible(Person p, Edible rawFood){
+        System.out.println(p + " will prepare and eat :" + rawFood + ". They do the following:" + rawFood.howToPrepare());
+        System.out.println("The person prepared and ate the meal. " + rawFood.calories() + " calories consumed.");
+        System.out.println();
+    }
+
+    public static void main(String[] args){
+        Person ashley = new Person("Ashley", "William", 1.8, 110, 29);
+
+        Person obj1 = new Person("Toshi", "Takemura", 1.7, 105, 41);
+        Horse obj2 = new Horse(450);
+        Cow obj3 = new Cow(1300);
+        Truck obj4 = new Truck(3230.5);
+        Violin obj5 = new Violin();
+
+        // Ashleyが他のAudibleオブジェクトとやりとりします。
+        personInteractsWithObject(ashley, obj1);
+        personInteractsWithObject(ashley, obj2);
+        personInteractsWithObject(ashley, obj3);
+        // CowはAudibleインターフェースとEdibleインターフェースの両方を実装しています。
+        // そのため、AshleyはCowとやりとりし、またCowを食べることも可能です。
+        personEatsEdible(ashley, obj3);
+    }
+}
+*/
+
 // インターフェイス1-2
+/*
 class Main {
     public static void checkMethod(Fly object) {
         System.out.println("Check Start-----------");
@@ -60,7 +554,7 @@ class AirPlane implements Fly {
         return this.flySpeed;
     }
 }
-
+*/
 
 /*
 //インターフェースは振る舞いだけを指定し、状態を指定することはできません。
