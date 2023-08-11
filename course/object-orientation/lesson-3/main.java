@@ -1,5 +1,814 @@
+// 汎用データ構造1
+abstract class GenericAbstractList<E>{
+
+    private E[] initialList;
+
+    // ユーザーは汎用なリストを元にこのAbstractListを始めることも、空のリストから始めることも可能です。
+    public GenericAbstractList(E[] arr){
+        this.initialList = arr;
+    }
+
+    public E[] getOriginalList(){
+        return initialList;
+    }
+
+    // GenericAbstractListが実装すべきメソッドです。
+    public abstract E get(E position); // positionで指定した位置の要素を取得します。
+    public abstract void add(E element); // リストの最後に要素を追加します。
+    public abstract void add(E[] elements); // リストの最後に要素を追加します。
+    public abstract E pop();//リストの最後から要素を削除します。削除した要素を返します。
+    public abstract void addAt(int position, E element);//指定された位置に要素を追加します。
+    public abstract void addAt(int position, E[] elements);//指定された位置に要素を追加します。
+    public abstract E removeAt(int position);//指定された位置の要素を削除します。削除した要素を返します。
+    public abstract void removeAllAt(int start);//指定された位置から始まる全ての要素を削除します。
+    public abstract void removeAllAt(int start, int end);//startからendまでの全ての要素を削除します。
+    public abstract GenericAbstractList<E> subList(int start); // 指定された位置から最後までの部分リストを返します。
+    public abstract GenericAbstractList<E> subList(int start, int end); // 指定された範囲の部分リストを返します。
+}
+
+interface Queue<E> {  
+    public abstract E peekLast();//リストの最後の要素を返します。
+    public abstract E pop();//リストの最後の要素を削除し、削除した要素を返します。
+    public abstract void push(E element);//リストの最後に要素を追加します。
+}
+
+
+
+// ジェネリクス1-2
+/*
+import java.lang.StringBuilder;
+
+class Main{
+    public static void main(String[] args){
+        // Integerのスタックを作成します。
+        // ここで、ジェネリック型EはIntegerになります。
+        StackGeneric<Integer> stack = new StackGeneric<Integer>();
+        System.out.println(stack);
+        stack.push(3);
+        stack.push(23);
+        stack.push(425);
+        stack.push(2456);
+        stack.push(14);
+        stack.push(455);
+        System.out.println(stack);
+
+        // 2つの整数をポップし、それらを掛け合わせます。結果はIntegerです。
+        System.out.println(stack.pop() * stack.pop());
+        System.out.println(stack);
+
+        // Doubleのスタックを作成します。
+        // ここで、ジェネリック型EはDoubleになります。
+        StackGeneric<Double> stackDouble = new StackGeneric<Double>();
+        System.out.println(stackDouble);
+        stackDouble.push(3.123);
+        stackDouble.push(23.5984);
+        stackDouble.push(42.515);
+        stackDouble.push(9.5154);
+        stackDouble.push(2.9941356);
+        stackDouble.push(1.00414);
+        System.out.println(stackDouble);
+        
+        // 2つのDoubleをポップし、それらを掛け合わせます。結果はDoubleです。
+        System.out.println(stackDouble.pop() * stackDouble.pop());
+        System.out.println(stackDouble);
+
+        // 次に、文字型のスタック、Catのスタックを作成してください。
+        StackGeneric<String> stackString = new StackGeneric<String>();
+        System.out.println(stackString);
+        stackString.push("a");
+        stackString.push("bb");
+        System.out.println(stackString);
+        System.out.println(stackString.pop() + stackString.pop());
+    }
+}
+
+// ジェネリック型をEとして定義します。
+class Node<E>{
+    E data;
+    Node<E> next;
+
+    public Node(E data){
+        // このノードが持つデータを設定します。データ型はEです。
+        this.data = data;
+    }
+}
+
+// Stackクラスもジェネリック型Eを使用します。
+// これにより、任意の型のオブジェクトをスタックに格納できます。
+// この場合、プレースホルダはEであり、このクラスをインスタンス化する際にEが何を意味するかを宣言することができます。
+// コンパイル時には、Eはインスタンス化時に宣言された指定されたクラスに置き換えられます。
+class StackGeneric<E>{
+    Node<E> head;
+
+    // pushメソッドでは、ジェネリック型Eのデータを引数に取ります。
+    // Eは、インスタンスが行われると特定のタイプに置き換えられます。
+    // これにより、任意の型のデータをスタックにプッシュできます。
+    public void push(E data){
+        // Nodeにもジェネリック型を使用します。クラス名で宣言したEプレースホルダを使用します。
+        Node<E> temp = this.head;
+        this.head = new Node<E>(data);
+        this.head.next = temp;
+    }
+
+    public E pop(){
+        if(this.head == null) return null;
+
+        Node<E> temp = this.head;
+        this.head = this.head.next;
+        // ポップしたノードのデータを返します。このデータの型はEです。
+        return temp.data;
+    }
+
+    public E peek(){
+        if(this.head == null) return null;
+        // スタックのトップのデータを返します。このデータの型はEです。
+        return this.head.data;
+    }
+
+    public String toString(){
+        if(this.head == null) return "null";
+        StringBuilder str = new StringBuilder("|" + this.head.data + "|");
+
+        Node<E> iterator = this.head.next;
+        while(iterator != null && iterator.next != null){
+            str.append(iterator.data + ",");
+            iterator = iterator.next;
+        }
+        
+        str.append(iterator.data);
+        return  str.toString() + "]";
+    }
+}
+*/
+
+
+
+/*
+このアプローチには問題があります。
+スタックは同一のデータ型から成る均一なリストであるべきです。
+異なるデータ型を混在させてしまうと、
+論理エラーや実行時エラーを引き起こす可能性があります。
+IntegerとDoubleを混在させたスタックを作成し、掛け合わせようとするとエラーになる
+本来は掛け算が可能
+*/
+/*
+import java.lang.StringBuilder;
+
+
+class Main{
+    public static void main(String[] args){
+        // IntegerStackとして使用
+        Stack stackInt = new Stack();
+        System.out.println(stackInt);
+        stackInt.push(3);
+        stackInt.push(23);
+        stackInt.push(425);
+        stackInt.push(94);
+        stackInt.push(2);
+        stackInt.push(14);
+        System.out.println(stackInt);
+        stackInt.pop();
+        stackInt.pop();
+        stackInt.push(45);
+        System.out.println(stackInt);
+
+        // DoubleStackとして使用
+        Stack stackDouble = new Stack();
+        System.out.println(stackDouble);
+        stackDouble.push(3.123);
+        stackDouble.push(23.5984);
+        stackDouble.push(42.515);
+        stackDouble.push(9.5154);
+        stackDouble.push(2.9941356);
+        stackDouble.push(0.00414);
+        System.out.println(stackDouble);
+        stackDouble.pop();
+        stackDouble.pop();
+        stackDouble.push(45.0);
+        System.out.println(stackDouble);
+    }
+}
+
+// Nodeクラスは任意のオブジェクトをデータとして保持します
+class Node{
+    Object data;
+    Node next;
+
+    // オブジェクトをデータとして持つノードを作成します
+    public Node(Object data){
+        this.data = data;
+    }
+}
+
+// 汎用なスタッククラス
+class Stack{
+    Node head;
+
+    // スタックに新しい要素を追加します
+    public void push(Object data){
+        Node temp = this.head;
+        this.head = new Node(data);
+        this.head.next = temp;
+    }
+
+    // スタックの先頭の要素を取り出し、その要素をスタックから削除します
+    public Object pop(){
+        if(this.head == null) return null;
+
+        Node temp = this.head;
+        this.head = this.head.next;
+        return temp.data;
+    }
+
+    // スタックの先頭の要素を取り出しますが、削除はしません
+    public Object peek(){
+        if(this.head == null) return null;
+        return this.head.data;
+    }
+
+    // スタックの内容を文字列として出力します
+    public String toString(){
+        if(this.head == null) return "null";
+        StringBuilder str = new StringBuilder("|" + this.head.data + "|");
+
+        Node iterator = this.head.next;
+        while(iterator != null && iterator.next != null){
+            str.append(iterator.data + ",");
+            iterator = iterator.next;
+        }
+        
+        str.append(iterator.data);
+        return  str.toString() + "]";
+    }
+}
+*/
+
+/*
+import java.lang.StringBuilder;
+// 型を変えてるだけでDRYの原則に反している
+class Main{
+    public static void main(String[] args){
+        // IntegerStackのテスト
+        IntegerStack stackInt = new IntegerStack();
+        System.out.println(stackInt);
+        stackInt.push(3);
+        stackInt.push(23);
+        stackInt.push(425);
+        stackInt.push(94);
+        stackInt.push(2);
+        stackInt.push(14);
+        System.out.println(stackInt);
+        stackInt.pop();
+        stackInt.pop();
+        stackInt.push(45);
+        System.out.println(stackInt);
+
+        // DoubleStackのテスト
+        DoubleStack stackDouble = new DoubleStack();
+        System.out.println(stackDouble);
+        stackDouble.push(3.123);
+        stackDouble.push(23.5984);
+        stackDouble.push(42.515);
+        stackDouble.push(9.5154);
+        stackDouble.push(2.9941356);
+        stackDouble.push(0.00414);
+        System.out.println(stackDouble);
+        stackDouble.pop();
+        stackDouble.pop();
+        stackDouble.push(45.0);
+        System.out.println(stackDouble);
+    }
+}
+
+// 整数を保持するためのノードクラス
+class IntegerNode{
+    Integer data;
+    IntegerNode next;
+
+    public IntegerNode(Integer data){
+        this.data = data;
+    }
+}
+
+// IntegerNodeを扱うスタッククラス
+class IntegerStack{
+    IntegerNode head;
+
+    // スタックに新しい要素を追加します
+    public void push(Integer data){
+        IntegerNode temp = this.head;
+        this.head = new IntegerNode(data);
+        this.head.next = temp;
+    }
+
+    // スタックの先頭の要素を取り出し、その要素をスタックから削除します
+    public Integer pop(){
+        if(this.head == null) return null;
+
+        IntegerNode temp = this.head;
+        this.head = this.head.next;
+        return temp.data;
+    }
+
+    // スタックの先頭の要素を取り出しますが、削除はしません
+    public Integer peek(){
+        if(this.head == null) return null;
+        return this.head.data;
+    }
+
+    // スタックの内容を文字列として出力します
+    public String toString(){
+        if(this.head == null) return "null";
+
+        // StringBuilderを使用して、O(n)で追加します。
+        StringBuilder str = new StringBuilder("|" + this.head.data + "|");
+
+        IntegerNode iterator = this.head.next;
+
+        while(iterator != null && iterator.next != null){
+            str.append(iterator.data + ",");
+            iterator = iterator.next;
+        }
+        
+        str.append(iterator.data);
+        return  str.toString() + "]";
+    }
+}
+
+// double型を保持するためのノードクラス
+class DoubleNode{
+    Double data;
+    DoubleNode next;
+
+    public DoubleNode(Double data){
+        this.data = data;
+    }
+}
+
+// DoubleNodeを扱うスタッククラス
+// このクラスは、IntegerStackとほぼ同じ処理を行いますが、保持するデータ型が異なるだけです
+// これはDRY（Don't Repeat Yourself）の原則に反しています
+class DoubleStack{
+    DoubleNode head;
+
+    // スタックに新しい要素を追加します
+    public void push(Double data){
+        DoubleNode temp = this.head;
+        this.head = new DoubleNode(data);
+        this.head.next = temp;
+    }
+
+    // スタックの先頭の要素を取り出し、その要素をスタックから削除します
+    public Double pop(){
+        if(this.head == null) return null;
+
+        DoubleNode temp = this.head;
+        this.head = this.head.next;
+        return temp.data;
+    }
+
+    // スタックの先頭の要素を取り出しますが、削除はしません
+    public Double peek(){
+        if(this.head == null) return null;
+        return this.head.data;
+    }
+
+    // スタックの内容を文字列として出力します
+    public String toString(){
+        if(this.head == null) return "null";
+
+        // StringBuilderを使用して、O(n)で追加します。
+        StringBuilder str = new StringBuilder("|" + this.head.data + "|");
+
+        DoubleNode iterator = this.head.next;
+
+        while(iterator != null && iterator.next != null){
+            str.append(iterator.data + ",");
+            iterator = iterator.next;
+        }
+        
+        str.append(iterator.data);
+        return  str.toString() + "]";
+    }
+}
+*/
+
+// データ構造インターフェース2
+/*
+abstract class AbstractListInteger {
+
+    private int[] initialList;
+
+    // AbstractListIntegerを整数リストで開始することも、空のリストで開始することもできます。
+    public AbstractListInteger() {
+        this.initialList = new int[0];
+    }
+
+    public AbstractListInteger(int[] arr) {
+        this.initialList = arr;
+    }
+
+    public int[] getOriginalList() {
+        return initialList;
+    }
+
+    // AbstractListIntegerが実装しなければならない抽象メソッド
+    public abstract int get(int position); // 特定位置の要素を取得します。
+
+    public abstract void add(int element); // リストの最後に追加します。
+
+    public abstract void add(int[] elements); // リストの最後の要素に追加します。
+
+    public abstract int pop();// リストの最後から削除します。削除した要素を返します。
+
+    public abstract void addAt(int position, int element);// 指定された位置に要素を追加します。
+
+    public abstract void addAt(int position, int[] elements);// 指定された位置に複数の要素を追加します。
+
+    public abstract int removeAt(int position);// 指定した位置にある要素を削除します。削除した要素を返します。
+
+    public abstract void removeAllAt(int start);// 指定された位置から始まるすべての要素を削除します。
+
+    public abstract void removeAllAt(int start, int end);// startからendまでの全ての要素を削除します。
+
+    public abstract AbstractListInteger subList(int start); // AbstractListIntegerの部分リストを、指定された位置から最後まで返します。
+
+    public abstract AbstractListInteger subList(int start, int end); // startからendまでのAbstractListIntegerの部分リストを返します。
+}
+
+
+
+
+interface StackInt{
+
+    public abstract int peekLast();
+
+    public abstract int pop();
+
+    public abstract void push(int value);
+
+}
+
+interface QueueInt {
+    public abstract int peekFirst();
+
+    public abstract int poll();
+
+    public abstract void push(int value);
+}
+
+
+interface DequeInt extends StackInt, QueueInt {
+    public abstract void addFirst(int value);
+}
+
+class Deque implements DequeInt {
+    private int[] list;
+
+    public DequeClass(int[] list) {
+        this.list = list;
+    }
+
+    public String toString() {
+        return Arrays.toString(this.list);
+    }
+
+    public void addFirst(int value) {
+        int[] newList = new int[list.length + 1];
+        newList[0] = value;
+        for(int i = 0; i < list.length; i++){
+            newList[i + 1] = this.list[i];
+        }
+        this.list = newList;
+    }
+
+    public int peekFirst() {
+        return this.list[0];
+    }
+
+    public int peekLast(){
+        return this.list[list.length - 1];
+    }
+
+    public int pop() {
+        int[] newList = new int[list.length - 1];
+        int value = peekLast();
+        for (int i = 0; i < list.length - 1; i++) {
+            newList[i] = this.list[i];
+        }
+        this.list = newList;
+        return value;
+    }
+
+    public int poll() {
+        int[] newList = new int[list.length - 1];
+        int value = peekFirst();
+        for (int i = 1; i < list.length; i++) {
+            newList[i - 1] = this.list[i];
+        }
+        this.list = newList;
+        return value;
+    }
+
+    public void push(int value) {
+        int[] newList = new int[list.length + 1];
+        for (int i = 0; i < list.length; i++) {
+            newList[i] = this.list[i];
+        }
+        newList[newList.length - 1] = value;
+        this.list = newList;
+    }
+
+}
+
+class IntegerLinkedList extends AbstractListInteger implements DequeInt{
+    
+    private Node head;
+    private int size;
+
+    public IntegerLinkedList() {
+        super();
+        this.head = null;
+        this.size = 0;
+    }
+
+    public IntegerArrayList(int[] arr){
+        super(arr);
+        this.head = null;
+        this.size = 0;
+        for(int num : arr){
+            add(num);
+        }
+    }
+
+    private static class Node {
+        int data;
+        Node next;
+
+        public Node(int data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    public int get(int position) {
+        Node current = head;
+        for (int i = 0; i < positon; i++) {
+            current = current.next;
+        }
+        return current.data;
+    }
+
+    public void add(int element) {
+        Node newNode = new Node(element);
+        if (head == null) {
+            head = newNode;
+        } else {
+            Node current = head;
+            while (current.enxt != null) {
+                current = current.next;
+            }
+
+            current.next = newNode;
+        }
+        size++;
+    }
+
+    public void add(int[] elements) {
+        for (int element : elements) {
+            add(element);
+        }
+    }
+
+    public int pop() {
+        int removeData = head.data;
+        head = head.next;
+        size--;
+        return removeData;
+    }
+
+    public void addAt(int position, int element) {
+        if (positon == 0) {
+            Node newNode = new Node(element);
+            newNode.next = head;
+            head = newNode;
+        } else {
+            Node current = head;
+            for (int i = 0; i < position - 1; i++) {
+                current = current.next;
+            }
+            Node newNode = new Node(element);
+            newNode.next = current.next;
+            current.next = newNode;
+        }
+        ;
+
+        size++;
+    }
+
+    public void addAt(int position, int[] elements) {
+        for (int element : elements) {
+            addAt(position, element);
+            position++;
+        }
+    }
+
+    public int removeAt(int position) {
+        if (position == 0) {
+            int removeData = head.data;
+            head = head.next;
+            size--;
+            return removeData;
+        } else {
+            Node current = head;
+            for (int i = 0; i < position - 1; i++) {
+                current = current.next;
+            }
+            int removeData = current.next.data;
+            currrent.next = current.next.next;
+            size--;
+            return removeData;
+        }
+    }
+
+    public void removeAllAt(int start) {
+        removeAllAt(start, size - 1);
+    }
+
+    public void removeAllAt(int start, int end) {
+        if (start == 0) {
+            for (int i = 0; i <= end; i++) {
+                head = head.next;
+            }
+        } else {
+            Node currnet = head;
+            for (int i = 0; i < start - 1; i++) {
+                current = current.next;
+            }
+            Node temp = current.next;
+            for (int i = 0; i <= end - start; i++) {
+                temp = temp.next;
+            }
+            current.next = temp;
+        }
+        size -= (end - start + 1);
+    }
+
+    public AbstractListInteger subList(int start) {
+
+    }
+
+    public AbstractListInteger subList(int start, int end) {
+        int[] subListArray = new int[end - start + 1];
+        Node current = head;
+        for (int i = 0; i < start; i++) {
+            current = current.next;
+        }
+
+        for (int i = 0; i <= end - start; i++) {
+            subListArray[i] = current.data;
+            current = current.next;
+        }
+        return new IntegerArrayList(subListArray);
+    }
+
+    // deque
+    public void addFirst(int value) {
+        addAt(0, value);
+    }
+
+    // stack
+    public int peekLast() {
+        return get(size);
+    }
+
+
+    public void push(int value){
+        addAt(size, value);        
+    }
+
+
+    // queue
+    public int peekFirst(){
+        return get(0);
+    }
+
+    public int poll() {
+        return removeAt(0);
+    }
+
+}
+*/
+
+// データ構造インターフェース1
+// インターフェースのextendsキーワードは、実装の複数継承を可能にします。
+// ただし、クラスには状態が含まれているため、
+// これは不可能であり、Javaは状態の単一継承しかサポートしていません。
+// スタックとキューのすべての抽象クラスを拡張（継承）します。
+/*
+import java.util.Arrays;
+class Main{
+    public static void main(String[] args){
+
+    int[] list1 = {0, 1, 2, 3};
+    Deque deque = new DequeClass(list1);
+    System.out.println("----check----------");
+    System.out.println();
+    deque.push(4);
+    System.out.println("peekLast: " + deque.peekLast());
+    System.out.println("peekfirst: " + deque.peekFirst());
+    System.out.println("pop: " + deque.pop());
+    System.out.println("poll: " + deque.poll());
+    deque.addFirst(6);
+    System.out.println(deque.toString());
+    }
+}
+
+interface Stack{
+    public abstract int peekLast();
+
+    public abstract int pop();
+
+    public abstract void push(int value);
+
+}
+
+interface Queue {
+    public abstract int peekFirst();
+
+    public abstract int poll();
+
+    public abstract void push(int value);
+}
+
+
+interface Deque extends Stack, Queue {
+    // deque独自のメソッド
+    public abstract void addFirst(int value);
+}
+
+class DequeClass implements Deque {
+    private int[] list;
+
+    public DequeClass(int[] list) {
+        this.list = list;
+    }
+
+    public String toString() {
+        return Arrays.toString(this.list);
+    }
+
+    public void addFirst(int value) {
+        int[] newList = new int[list.length + 1];
+        newList[0] = value;
+        for(int i = 0; i < list.length; i++){
+            newList[i + 1] = this.list[i];
+        }
+        this.list = newList;
+    }
+
+    public int peekFirst() {
+        return this.list[0];
+    }
+
+    public int peekLast(){
+        return this.list[list.length - 1];
+    }
+
+    public int pop() {
+        int[] newList = new int[list.length - 1];
+        int value = peekLast();
+        for (int i = 0; i < list.length - 1; i++) {
+            newList[i] = this.list[i];
+        }
+        this.list = newList;
+        return value;
+    }
+
+    public int poll() {
+        int[] newList = new int[list.length - 1];
+        int value = peekFirst();
+        for (int i = 1; i < list.length; i++) {
+            newList[i - 1] = this.list[i];
+        }
+        this.list = newList;
+        return value;
+    }
+
+    public void push(int value) {
+        int[] newList = new int[list.length + 1];
+        for (int i = 0; i < list.length; i++) {
+            newList[i] = this.list[i];
+        }
+        newList[newList.length - 1] = value;
+        this.list = newList;
+    }
+
+}
+*/
 
 // 複数のインターフェイス2
+/*
 class Main {
     public static void personInteractsWithObject(Person p, Audible noiseObject) {
         System.out.println(p + " will interact with " + noiseObject + " and cause it to make a noise");
@@ -263,9 +1072,7 @@ class Violin implements Audible{
         return Violin.SOUND_DECIBELS;
     }
 }
-
-
-
+*/
 
 // 複数のインターフェイス1
 /*
@@ -1281,7 +2088,7 @@ class BigDecimalNumeric extends Numeric {
         return decimalToInt(this.octaValue) + 0.0;
     }
 }
-*/ 
+*/
 
 // 抽象クラス１-2
 /*
