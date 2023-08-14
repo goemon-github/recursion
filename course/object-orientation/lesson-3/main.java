@@ -36,6 +36,18 @@ interface Queue<E> {
     public abstract void push(E element);//リストの最後に要素を追加します。
 }
 
+interface Stack<E>{
+
+    public abstract E peekLast();
+    public abstract E pop();
+    public abstract void push(E value);
+
+}
+
+interface DequeInt<E> extends Stack, Queue {
+    public abstract void addFirst(E value);
+}
+
 class Node<E>{
     E data;
     Node<E> next;
