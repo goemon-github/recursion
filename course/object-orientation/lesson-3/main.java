@@ -1,4 +1,6 @@
 // 汎用データ構造1
+import java.util.Arrays;
+import java.lang.StringBuilder;
 abstract class GenericAbstractList<E>{
 
     private E[] initialList;
@@ -26,12 +28,344 @@ abstract class GenericAbstractList<E>{
     public abstract GenericAbstractList<E> subList(int start, int end); // 指定された範囲の部分リストを返します。
 }
 
-interface Queue<E> {  
+interface Queue<E> {
     public abstract E peekLast();//リストの最後の要素を返します。
+
     public abstract E pop();//リストの最後の要素を削除し、削除した要素を返します。
+
     public abstract void push(E element);//リストの最後に要素を追加します。
 }
 
+class Node<E>{
+    E data;
+    Node<E> next;
+
+    public Node(E data){
+        this.data = data;
+    }
+}
+
+class GenericLinkedList<E> extends GenericAbstractList<E> implements Queue<E>{
+    private Node<E> head; 
+
+    public GenericLinkedList(E[] arr) {
+        super(arr);
+        this.head = null;
+    }
+
+    public E get(E position;) {
+        Node<E> cueentNode = this.head;
+        for (int i = 0; i < position; i++) {
+            cueentNode = cueentNode.next;
+        }
+
+        return cueentNode.data;
+        
+    }
+
+    public void add(E element) {
+        Node<E> newNode = new Node(element);
+        if (this.head != null) {
+            this.head = newNode;
+        } else {
+            Node<E> currentNode = this.head;
+            while (currentNode.next != null) {
+                currentNode = currentNode.next;
+            }
+            currentNode.next = newNode;
+        }
+
+    }
+
+    public void add(E[] element) {
+            Node<E> newNodes = new Node(element[0]);
+        for (int i = 1; i < element.length; i++) {
+            Node<E> newNode = new Node(element[i]);
+            newNodes.next = newNode;
+            newNodes = newNodes.next;
+        }
+        if (this.head != null) {
+            this.head = newNodes;
+        } else {
+            Node<E> currentNode = this.head;
+            while (currentNode.next != null) {
+                currentNode = currentNode.next;
+            }
+            currentNode.next = newNodes;
+        }
+    }
+
+    public E pop() {
+        Node<E> currentNode = this.head;
+        while (currentNode.next != null) {
+            currentNode = currentNode.next;
+        }
+        Node<E> popNode = currentNode;
+        currentNode.data = null;
+        return popNode;
+    }
+
+    public void addAt(int position, E element) {
+        Node<E> newNode = new Node(element);
+        Node<E> currentNode = this.head;
+        for (int i = 0; i < position - 1; i++) {
+            currentNode = currentNode.next;
+        }
+        Node<E> temp = currentNode.next;
+        currentNode.next = newNode;
+        newNode.next = temp;
+    }
+
+    public void addAt(int position, E[] element) {
+        Node<E> newNodes = new Node(element[0]);
+        for(int i = 1; i < element.length; i++){
+            newNodes.next = element[i];
+        }
+        Node<E> currentNode = this.head;
+        for (int i = 0; i < position; i++) {
+            currentNode = currentNode.next;
+        }
+        Node<E> temp = currentNode.next;
+        currentNode.next = newNodes;
+        currentNode.next.next = temp;
+    }
+
+    public E removeAt(int positon) {
+        Node<E> currentNode = this.head;
+        for (int i = 0; i < positon; i++) {
+            currentNode = currentNode.next;
+        }
+        Node<E> removeNode = currentNode;
+        currentNode = currentNode.next.next;
+        return removeNode;
+    }
+
+    public void removeAllAt(int start) {
+        Node<E> currentNode = this.head;
+        for (int i = 0; i < start; i++) {
+            currentNode = currentNode.next;
+        }
+        currentNode.next = null;
+    }
+
+    public void removeAllAt(int start, int end) {
+        Node<E> currentNode = this.head;
+        for (int i = 0; i < start; i++) {
+            currentNode = currentNode.next;
+        }
+        Node<E> leftNode = currentNode;
+        for (int i = 0; i < end; i++) {
+            currentNode = currentNode.next;
+        }
+        Node<E> rightNode = currentNode.next;
+        leftNode.next = rightNode;
+    }
+
+    public GenericAbstractList<E> subList(int start){
+        Node<E> currentNode = this.head;
+        for (int i = 0; i < start; i++) {
+            currentNode = currentNode.next;
+        }
+        Node<E> sublistNode = currentNode;
+        while (currentNode.next != null) {
+            currentNode = currentNode.next;
+            sublistNode.next = currentNode;
+            sublistNode = sublistNode.next;
+        }
+        sublistNode.next = currentNode;
+
+        return  GenericAbstractList(subListNode);
+        
+    }
+
+    public GenericAbstractList<E> subList(int start, int end) {
+
+        Node<E> currentNode = this.head;
+        for (int i = 0; i < start; i++) {
+            currentNode = currentNode.next;
+        }
+        Node<E> sublistNode = currentNode;
+        for (int i = 0; i <= end; i++) {
+            currentNode = currentNode.next;
+            sublistNode.next = currentNode;
+            sublistNode = sublistNode.next;
+        }
+
+        return  GenericAbstractList(subListNode);
+    }
+
+    public E peekLast(){
+        Node<E> currentNode = this.head;
+        while (currentNode.next != null) {
+            currentNode = currentNode.next;
+        }
+        return currentNode.data;
+    }
+
+    public E pop(){
+        Node<E> currentNode = thia.head;
+        while (currentNode.next.next != null) {
+            currentNode = currentNode.next;
+        }
+        Node<E> temp = currentNode.next;
+        currentNode.next = null;
+
+        return temp.data;
+    }
+
+    public void push(E element){
+        Node<E> newNode = new Node(element);
+        newNode.next = this.head;
+        this.head = newNode;
+    }
+}
+
+class GenelicArrayList<E> extends GenericAbstractList implements Queue {
+
+    private E[] list;
+    private int size;
+
+    public GenelicArrayList() {
+        list = (E[]) new Object[10];
+        size = 0;
+    }
+
+    public GenelicArrayList(E[] arr) {
+        super(arr);
+        list = (E[]) new Object[arr.length];
+        size = arr.length;
+        for (int i = 0; i < arr.length; i++) {
+            list[i] = arr[i];
+        }
+    }
+
+    private void resizeArray() {
+        int mewSize = Math.max(size * 10, 10);
+        E[] mewList = Array.copyOf(list, newSize);
+        list = newList;
+    }
+
+
+    public E get(E position) {
+        return list[position];
+    }
+
+    public void add(E element) {
+        if (size == list.length) {
+            resizeArray();
+        }
+        list[size] = element;
+        size++;
+
+    }
+
+    public void add(E[] element) {
+        if (size + elements.length > list.length) {
+            resizeArray();
+        }
+        for (let i = 0; i < elements.length; i++) {
+            list[size + i] = elements[i];
+        }
+
+        size += elements.length; 
+
+    }
+
+    public E pop() {
+        E temp = list[size];
+        list[size] = null;
+        size--;
+        return temp;
+    }
+
+    public void addAt(int position, E element) {
+        if (size == list.length) {
+            resizeArray();
+        }
+
+        E[] newList = new int[list.length];
+        for (int i = 0; i < position; i++) {
+            newList[i] = list[i];
+        }
+
+        newList[position] = element;
+
+        for (int i = position; i > list.length; i++) {
+            newlist[i + 1] = list[i];
+        }
+        list = newList;
+        size++;
+    }
+
+    public void addAt(int position, E[] element) {
+
+        if (size + elements.length > list.length) {
+            resizeArray();
+        }
+
+        for (int i = size - 1; i > position; i--) {
+            list[i + elements.length] = list[i];
+        }
+        for (int i = 0; i < elements.length; i++) {
+            newList[position + i] = elements[i];
+        }
+        size += elements.lenegth;
+
+    }
+
+    public E remeveAt(int positon) {
+        E removeElement = list[position];
+        for (int i = position; i < size - 1; i++) {
+            list[i] = list[i + 1];
+       }
+        list[size - 1] = 0;
+        size--;
+
+        return removeElement;
+
+    }
+
+    public void removeAllAt(int start) {
+        removeAllAt(start, size - 1);
+    }
+
+    public void removeAllAt(int start, int end) {
+        int elementsRemove = end - start + 1;
+
+        // 要素を削除してシフト
+        for (int i = start; i < size - elementsToRemove; i++) {
+            list[i] = list[i + elementsToRemove];
+        }
+
+        for (int i = size - elementsToRemove; i < size; i++) {
+            list[i] = 0;
+        }
+
+        size -= elementsToRemove;
+    }
+
+    public  GenericAbstractList<E> subList(int start){
+        return GenelicArrayList(start, size - 1);
+    }
+
+    public GenericAbstractList<E> subList(int start, int end) {
+        E[] sublistArray = new E[end - start + 1];
+
+        for (int i = 0; i < sublistArray.lengtth; i++) {
+            sublistArray[i] = list[start + i];
+        }
+
+        return new IntegerArrayList(sublistArray);
+    }
+
+    public E peekLast(){
+        return get[size - 1];
+    }
+
+    public void push(E element){
+        addAt(size - 1, element);
+    }
+}
 
 
 // ジェネリクス1-2
