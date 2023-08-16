@@ -1,4 +1,194 @@
+// leasrt Recently Used Cache
+import java.util.Map;
+import java.util.HashMap;
+import java.lang.StringBuilder;
+
+interface Stack<E> {
+    public abstract E peekLast();
+    public abstract E pop();
+}
+
+interface Queue<E> {
+    public abstract E peekFront();
+    public abstract E poll();//最初の要素を削除　
+}
+
+
+
+abstract class GenericDoublyLinkedList<E> implements Stack<E>. Queue<E>{
+    protected Node<E> head;
+    protected Node<E> tail;
+
+    public abstract E get(int ey); // positionで指定した位置の要素を取得します。
+    public abstract void addToHead(E lement); // リストの最後に要素を追加します。
+    public abstract void addToTail(E element); // リストの最後に要素を追加します。
+    public abstract E pop();//リストの最後から要素を削除します。削除した要素を返します。
+    public abstract void remove(int key);//指定された位置の要素を削除します。削除した要素を返します。
+
+}
+
+abstract class abstractLRUChache<E> {
+    protected int capacity;
+    protected doublyLinkedList<E> chacheList;
+
+    public abstractLRUChache(int capacity){
+        this.capacity = capacity;
+        this.chacheList = new doublyLinkedList<E>();
+    }
+
+    public abstract Node<E> get(int key);
+
+    public abstract void put(int key, E data);
+}
+
+class Node<E> {
+    int key;
+    E data;
+    Node<E> prev;
+    Node<E> next;
+
+    public Node() {};
+
+    public Node(int key,  E data){
+        this.key = key;
+        this.data = data;
+    }
+}
+
+class doublyLinkedList<E> extends GenericDoublyLinkedList<E>{
+    private HashMap<Integer, Node<E>> hashmap;
+
+    public doublyLinkedList() {
+        super();
+        this.hashmap = new Hashmap<>();
+    }
+
+    // stack
+    public E peekLast(){
+        if (this.tail == null) {
+            return peekFront();
+        }
+        return this.tail.data;
+    }
+
+    // 最後の要素を削除
+    public E pop(){
+        E popNode = this.tail;
+        this.tail.prev.next = this.tail.next;
+        this.hashmap.remove(popNode.key);
+        return popNode;
+    }
+
+    // queue
+    public E peekfront(){
+        if (this.head == null) {
+            return null;
+        }
+        return this.head.data;
+    }
+
+    //最初の要素を削除
+    public E poll() {
+        E pollNode = this.head;
+        this.head = this.head.next;
+        this.hashmap.remove(popNode.key);
+        return pollNode;
+    }
+
+
+    // genericDublyLinkedList
+    public E get(int key) {
+        Node<E> node = this.hashmap.get(key);
+        return node;
+    }
+
+
+    public void addToHead(Node<E> element){
+        this.hashmap.put(element.key, element);
+        element.prev = this.head.prev;
+        element.next = this.head;
+        this.head.prev = element;
+        this.head = element;
+        
+    }
+
+    public void addToTail(Node<E> element){
+        this.hashmap.put(element.key, element);
+        element.prev = this.tail;
+        element.next = null;
+        this.tail.next = element;
+        this.tail = element;
+    }
+
+    public void remove(int key){
+        Node<E> removeNode = this.hashmap.get(key);
+        if (removeNode != null) {
+            Node<E> preNode = removeNode.prev;
+            Node<E> nextNode = removeNode.next;
+
+            if (preNode != null) {
+                preNode.next = nextNode;
+            }
+
+            if (nextNode != null) {
+                nextNode.prev = prevNode;
+            }
+
+            this.hashmap.remove(key);
+        }
+
+    }
+
+    public void removeToHead() {
+        Node<E> node = this.head;
+        this.hashmap.remove(node.key);
+        this.head = this.head.next;
+        if (this.head != null) {
+            this.head.prev = null;
+        } else {
+            this.tail = null;
+        }
+    }
+
+}
+
+
+
+class LRUChache<E> extends abstractLRUChache<E> {
+
+    public LRUChache(int capacity) {
+        super(capacity);
+    }
+
+    public Node<E> get(int key){
+        Node<E> node = this.chacheList.get(key);
+        if (node != null) {
+            this.chacheList.remove(key);
+            this.chacheList.addToTail(node);
+            return node;
+        }
+        return null;
+    }
+
+    public void put(int key, E data) {
+        if (this.chacheList.contains(key)) {
+            this.chacheList.get(key).data = data;
+        } else {
+            if (this.chacheList.size > this.capacity) {
+                while(this.chacheList.size >= this.capacity)
+                this.chacheList.removeToHead();
+            }
+            Node<E> newNode = new Node(key, data);
+            this.chacheList.addToTail(newNode);
+
+        }
+
+    }
+
+}
+
 // 汎用データ構造1
+/*
 import java.util.Arrays;
 import java.lang.StringBuilder;
 abstract class GenericAbstractList<E>{
@@ -16,6 +206,7 @@ abstract class GenericAbstractList<E>{
 
     // GenericAbstractListが実装すべきメソッドです。
     public abstract E get(E position); // positionで指定した位置の要素を取得します。
+        ouper(capacity);
     public abstract void add(E element); // リストの最後に要素を追加します。
     public abstract void add(E[] elements); // リストの最後に要素を追加します。
     public abstract E pop();//リストの最後から要素を削除します。削除した要素を返します。
@@ -37,11 +228,9 @@ interface Queue<E> {
 }
 
 interface Stack<E>{
-
     public abstract E peekLast();
     public abstract E pop();
     public abstract void push(E value);
-
 }
 
 interface DequeInt<E> extends Stack, Queue {
@@ -378,7 +567,7 @@ class GenelicArrayList<E> extends GenericAbstractList implements Queue {
         addAt(size - 1, element);
     }
 }
-
+*/
 
 // ジェネリクス1-2
 /*
