@@ -1,178 +1,435 @@
-
-// HTMLファイルのToDoリストを参考にしてください。
-const config = {
-    parentId: "target",
-    url:"https://api.recursionist.io/random-words",
+const settingUrl = {
+    url: "https://api.recursionist.io/builder/computers?type=",
+    parameters: {
+        cpu: "cpu",
+        gpu: "gpu",
+        ram: "ram",
+        hdd: "hdd",
+        ssd: "ssd",
+    }
 }
 
-const fetchURL = fetch(config.url);
-const jsonResponce = fetchURL.then(responce => responce.json());
-jsonResponce.then(data => console.log(data));
+let config = {
+    cpu: {
+        brand: "#cpuBrand",
+        model: "#cpuModel",
+    },
+    gpu: {
+        brand: "#gpuBrand",
+        model: "#gpuModel",
+    },
+    ram: {
+        num:"#ramMany",
+        brand: "#ramBrand",
+        model: "#ramModel",
+    },
+    storage: {
+        type: "#storageType",
+        size: "#storageSize",
+        brand: "#storageBrand",
+        model: "#storageModel",
+    },
+    parent: document.getElementById("target")
+};
 
-////// arrow
-const fetchPromiseRanInt = fetch('https://api.recursionist.io/random-integer');
+class PC{
+    constructor() {
+        this.cpuBrand = null;
+        this.cpuModel = null;
+        this.cpuBenchmark = null;
+        this.gpuBrand = null;
+        this.gpuModel = null;
+        this.gpuBenchmark = null;
+        this.ramBrand = null;
+        this.ramModel = null;
+        this.ramBenchmark = null;
+        this.storageType = null;
+        this.storageSize = null;
+        this.storageBrand = null;
+        this.storageModel = null;
+        this.storageBenchmark = null;
+    }
 
-const jsonResponse = fetchPromiseRanInt.then(function(response){
-    return response.json();
-});
+    addBrandData(parts, brand) {
+        switch (parts) {
+            case "cpu":
+                this.cpuBrand = brand;
+                break;
+            case "gpu":
+                this.gpuBrand = brand;
+                break;
+            case "ram":
+                this.ramBrand = brand;
+                break;
+            case "hdd":
+                this.storageBrand = brand;
+                break;
+            case "ssd":
+                this.storageBrand = brand;
+                break;
+        }
+    }
 
-jsonResponse.then(function(data){
-    console.log(data);
-});
+    addModelData(parts, model) {
+        switch (parts) {
+            case "cpu":
+                this.cpuModel = model;
+                break;
+            case "gpu":
+                this.gpuModel = model;
+                break;
+            case "ram":
+                this.ramModel = model;
+                break;
+            case "hdd":
+                this.storageModel = model;
+                break;
+            case "ssd":
+                this.storageModel = model;
+                break;
+        }
+    }
 
-// これをメソッドチェーンとアロー関数を使って書き直します。
-let serverData = fetch('https://api.recursionist.io/random-integer').then(response=>response.json()).then(function(data){
-    console.log(data);
-});
+    addStorageData(parts, size) {
+        this.storageType = parts;
+        this.storageSize = size;
+    }
 
-// もしくは以下のように書くことができます。
-// let serverData = fetch('https://api.recursionist.io/random-integer').then(response=>response.json()).then(data=>console.log(data));
+    addBenchmarkData(parts, benchmark) {
+        switch (parts) {
+            case "cpu":
+                this.cpuBenchmark = benchmark;
+                break;
+            case "gpu":
+                this.gpuBenchmark = benchmark;
+                break;
+            case "ram":
+                this.ramBenchmark = benchmark;
+                break;
+            case "hdd":
+                this.storageBenchmark = benchmark;
+                break;
+            case "ssd":
+                this.storageBenchmark = benchmark;
+                break;
+        }
+    }
+
+    getGameBenchMarkScore() {
+        let cpuScore = parseInt(this.cpuBenchmark * 0.25);
+        let gpuScore = parseInt(this.gpuBenchmark * 0.6);
+        let ramScore = parseInt(this.ramBenchmark * 0.125);
+        let storageScore = parseInt(this.storageBenchmark * 0.025);
+
+        return cpuScore + gpuScore + ramScore + storageScore;
+    }
+
+    getWorkBenchMarkScore() {
+        let cpuScore = parseInt(this.cpuBenchmark * 0.6);
+        let gpuScore = parseInt(this.gpuBenchmark * 0.25);
+        let ramScore = parseInt(this.ramBenchmark * 0.1);
+        let storageScore = parseInt(this.storageBenchmark * 0.05);
+
+        return cpuScore + gpuScore + ramScore + storageScore;
+    }
+
+}
 
 
+class View{
+    static createPCScorePage(pc, gamebenckMarkScore, workBenckMarkScore) {
+        let container = document.querySelectorAll('#pcPage')[0];
+        let div = document.createElement('div');
+        div.classList.add("bg-primary", "py-5");
+        div.innerHTML = 
+        `
+            <h1 class="text-white text-center font-size">Your PC</h1>
+            <div class="text-white p-5"> 
+                <div class="d-flex flex-column p-3 mt-2" >
+                    <h2>CPU</h2>
+                    <h5>Brand: ${pc.cpuBrand}</h5>
+                    <h5>Model: ${pc.cpuModel}</h5>
+                </div>
+                <div class="d-flex flex-column p-3 mt-2" >
+                    <h2>GPU</h2>
+                    <h5>Brand: ${pc.gpuBrand}</h5>
+                    <h5>Model: ${pc.gpuModel}</h5>
+                </div>
+                <div class="d-flex flex-column p-3 mt-2" >
+                    <h2>RAM</h2>
+                    <h5>Brand: ${pc.ramBrand}</h5>
+                    <h5>Model: ${pc.ramModel}</h5>
+                </div>
+                <div class="d-flex flex-column p-3 mt-2" >
+                    <h2>Storage</h2>
+                    <h5>Disk: ${pc.storageType}</h5>
+                    <h5>Storage: ${pc.storageSize}</h5>
+                    <h5>Brand: ${pc.storageBrand}</h5>
+                    <h5>Model: ${pc.storageModel}</h5>
+                </div>
+            </div>
+            <div class="d-flex justify-content-around text-white">
+                <h2>Gaming: ${gamebenckMarkScore}%</h2>
+                <h2>Work: ${workBenckMarkScore}%</h2>
+            </div>
+        `;
+
+        container.append(div);
+    }
+
+}
+
+class Model{
+
+    
+}
+
+class Controller{
+    static start() {
+        let pc = new PC();
+        Controller.getAllData(pc);
+        Controller.watchForAddPC(pc);
+    }
+
+    static watchForAddPC(pc) {
+        let btn = document.getElementById("addPC");
+        btn.addEventListener("click", function () {
+            Controller.clickCreatePCPage(pc);
+        })
+    }
+
+    static getAllData(pc) {
+        const cpuBrand = document.querySelectorAll(config.cpu.brand)[0];
+        const cpuModel = document.querySelectorAll(config.cpu.model)[0];
+        const gpuBrand = document.querySelectorAll(config.gpu.brand)[0];
+        const gpuModel = document.querySelectorAll(config.gpu.model)[0];
+        const ramBrand = document.querySelectorAll(config.ram.brand)[0];
+        const ramModel = document.querySelectorAll(config.ram.model)[0];
+
+        const storageBrand = document.querySelectorAll(config.storage.brand)[0];
+        const storageModel = document.querySelectorAll(config.storage.model)[0];
 
 
-////// Promise
-// APIからランダムな整数を取得するためのPromiseオブジェクトを作成します
-const fetchPromiseRanInt = fetch('https://api.recursionist.io/random-integer');
+       Controller.getBrandData(settingUrl.parameters.cpu, cpuBrand, cpuModel, pc);
+       Controller.getBrandData(settingUrl.parameters.gpu, gpuBrand, gpuModel, pc);
+       Controller.getRamData(settingUrl.parameters.ram, ramBrand, ramModel, pc);
+       Controller.getStorageData(storageBrand, storageModel, pc);
+       
+    }
 
-// fetchが成功した場合、then関数が実行されます
-// コールバック関数にはresponseオブジェクトが渡されます
-// JavaScriptでは、関数を直接引数として渡すことができます。この場合、thenメソッドに渡された無名関数は、
-// fetchPromiseRanIntの非同期操作が成功した場合に実行されるコールバック関数として機能します。
-// 無名関数は、関数名を持たない関数です（詳しくは上級のラムダ関数で学習します）
-const jsonResponse = fetchPromiseRanInt.then(function(response){
-    // サーバからのレスポンスをJSONに変換するためのjsonメソッドを呼び出します
-    // jsonメソッドもPromiseオブジェクトを返します
-    return response.json();
-});
+    /* get */
 
-console.log(jsonResponse);
+    // 入力に対応したbrand情報を取得し、選択欄に情報を追加する
+    static getBrandData(parts, brandOp, modelOp, pc) {
+        fetch(settingUrl.url + parts).then(responce => responce.json())
+            .then(data => {
+                brandOp.innerHTML = `<option>-</option>`;
+                let brandData =  Controller.getBrand(data);
+                let modelData = Controller.getModel(data);
+                let benchMarkData = Controller.getBenchMark(data);
 
-// Promiseオブジェクトに自動的に渡されるデータ（解析されたJSONデータ）を処理するため、
-// then関数が使用できます
-// このコールバック関数の引数dataは、解析されたJSONデータを表します
-jsonResponse.then(function(data){
-    console.log(data);
-});
+                Controller.createAddOption(brandData, brandOp);
+
+                //brandの選択が終わったら、モデルの処理を走らせる
+                let brandEvent = () => Controller.getModelData(parts, brandOp, modelOp, modelData, benchMarkData, pc);
+                brandOp.addEventListener("change", brandEvent);
+                    
+            });
+
+    }
+
+    // 適切なモデルのデータを取得し、オプションに追加
+    static getModelData(parts, brandOp, modelOp, modelData, benchMarkData, pc) {
+        const brand = brandOp.value;
+        pc.addBrandData(parts, brand);
+        modelOp.innerHTML = `<option>-</option>`;
+        if (parts == "hdd" || parts == "ssd") {
+            const storageSize = document.querySelectorAll(config.storage.size)[0];
+            let filterModelData = Controller.filterStorageModel(storageSize.value, modelData[brandOp.value]);
+            pc.addStorageData(parts, storageSize.value);
+            Controller.createAddOption(filterModelData, modelOp);
+        }else if (parts == "ram") {
+            const ramNum = document.querySelectorAll(config.ram.num)[0];
+            const ramSelectNumber = ramNum.value;
+            const filterModelData = Controller.filterRamModelData(ramSelectNumber, brandOp.value, modelData);
+            Controller.createAddOption(filterModelData, modelOp);
+
+        } else {
+            let filterModelData = Controller.filterToModel(brand, modelData);
+            Controller.createAddOption(filterModelData, modelOp);
+
+        }
+
+        modelOp.addEventListener("change", function () {
+            let selectModel = modelOp.value;
+            let benckMark = benchMarkData[selectModel];
+            pc.addModelData(parts, selectModel);
+            pc.addBenchmarkData(parts, benckMark);
+        });
+    }
 
 
+    // ブランドデータの重複を解消して取得
+    static getBrand(data) {
+        let brandData = {};
+        for(let i in data) {
+            let currentData = data[i];
+            if (brandData[currentData.Brand] == undefined) brandData[currentData.Brand] = currentData.Brand;
+        }
+        return brandData;
+    }
 
-/////// JSON
-// name, job, age, gender
-// Steve, lawyer, 30, male
-// Jack, tennis player, 26, male
-// Lisa, UX designer, 23, female
-// この3人のデータをJSONとして表し、for-in構文を使って全員の情報をコンソールに表示しましょう。
-
-const jsonString = `
-    [
-        {
-            "Steve": {
-            "job": "awyer",
-            "age": 30,
-            "gender": "male"
+    // モデルデータを重複を解消して取得　
+    static getModel(data) {
+        let modelData = {};
+        for (let i in data) {
+            let currentData = data[i];
+            if (modelData[currentData.Brand] == undefined) {
+                modelData[currentData.Brand] = [currentData.Model];
+            } else {
+                modelData[currentData.Brand].push(currentData.Model);
             }
-        },
-        {
-            "Jack": {
-            "job": "tennis player",
-            "age": 26,
-            "gender": "male"
-            }
-        },
-        {
-            "Lisa": {
-            "job": "UX designer",
-            "age": 23,
-            "gender": "femle"
+        };
+        return modelData;
+    }
+
+    static getBenchMark(data) {
+        let benchMarkData = {};
+        for (let i in data) {
+            const currentData = data[i];
+            if (benchMarkData[currentData.Model] == undefined) benchMarkData[currentData.Model] = currentData.Benchmark;
+        }
+        return benchMarkData;
+    }
+
+    /* storage */
+
+    // ストレージのタイプの変更を監視し、ブランドのオプション表示まで行う
+    static getStorageData(brandOp,modelOp, pc) {
+        const storageType = document.querySelectorAll(config.storage.type)[0];
+        const storageSize = document.querySelectorAll(config.storage.size)[0];
+
+        storageType.addEventListener("change", function () {
+            let type = storageType.value;
+            Controller.getStorageSizeData(type, storageSize);
+            Controller.getBrandData(type, brandOp, modelOp, pc);
+        });
+    }
+
+    // ストレージのデータをフェッチし容量順に一覧をオプションで表示
+    static getStorageSizeData(type, target) {
+        fetch(settingUrl.url + type).then(responce => responce.json()).then(data => {
+            let storageSize = Controller.getStorageModel(data);
+            let sortList = Controller.sortStorage(storageSize);
+            Controller.createAddOption(sortList, target);
+        });
+    }
+
+    // ストレージを容量順にソートする
+    static sortStorage(data) {
+        let modelList = Object.keys(data);
+        let tbSizeList = [];
+        let gbSizeList = [];
+
+        modelList.forEach(model => {
+            if (model.includes("TB")) {
+                tbSizeList.push(parseFloat(model.replace("TB", "")));
+            } else {
+                gbSizeList.push(parseFloat(model.replace("GB", "")));
+            }; 
+        });
+
+        let sortedTb = tbSizeList.sort((a, b) => b - a).map(x => x.toString() + "TB");
+        let sortedGb = gbSizeList.sort((a, b) => b - a).map(x => x.toString() + "GB");
+        return sortedTb.concat(sortedGb);
+    }
+
+    // ストレージをモデル名から容量別に仕分ける
+    static getStorageModel(data) {
+        let modelData = {};
+        for (let i in data) {
+            let currentData =  Controller.getStorageSizeString(data[i].Model);
+            if (modelData[currentData] == undefined) modelData[currentData] = currentData;
+        }
+        return modelData;
+    }
+
+    // ストレージのGB,TBの箇所のみ取得
+    static getStorageSizeString(storageModel) {
+        let storageSizeString = storageModel.split(' ').filter(word => word.includes("GB") || word.includes("TB")).join('');
+        return storageSizeString;
+    }
+
+
+
+    /* ram */
+
+    // ramの本数を監視
+    static getRamData(parts, brandOp, modelOp, pc) {
+        const ramNum = document.querySelectorAll(config.ram.num)[0];
+        ramNum.addEventListener("change", function () {
+            Controller.getBrandData(parts, brandOp, modelOp, pc);
+        });
+    }
+
+
+    /* create */ 
+
+    // 追加するオプションを作成
+    static createAddOption(data, targetElement) {
+        for (let i in data) {
+            let option = document.createElement("option");
+            option.value = data[i];
+            option.innerText = data[i];
+            targetElement.append(option);
+        }
+    }
+
+    static clickCreatePCPage(pc) {
+        let checkList = [pc.cpuModel, pc.gpuModel, pc.ramModel, pc.storageModel];
+        for (let i in checkList) {
+            if (checkList[i] == null) return alert("全ての項目を埋めて下さい");
+        }
+        let gameBenckMarkScore = pc.getGameBenchMarkScore();
+        let workBenchMarkScore = pc.getWorkBenchMarkScore();
+
+        View.createPCScorePage(pc, gameBenckMarkScore, workBenchMarkScore);
+    }
+
+    /* filter */
+
+    // モデルデータをブランドで取得
+    static filterToModel(brand, data) {
+        if (data[brand]) {
+            return data[brand];
+        }
+    }
+
+    // ストレージのモデルを選択されている容量に合わせてフィルターし返す
+    static filterStorageModel(size, modelData) {
+        let filterModelDeta = {};
+        for (let i in modelData) {
+            const currentData = modelData[i];
+            if (currentData.includes(size) &&  filterModelDeta[currentData] == undefined) {
+                filterModelDeta[currentData] = currentData;
             }
         }
-]
-`;
-
-const jsonString = `
-    [{
-        "name": "Steve",
-        "job": "awyer",
-        "age": 30,
-        "gender": "male"
-    },
-    {
-        "name": "Jack",
-        "job": "tennis player",
-        "age": 26,
-        "gender": "male"
-    },
-    {
-        "name": "Lisa",
-        "job": "UX designer",
-        "age": 23,
-        "gender": "femle"
-    }]
-`;
-
-const persons = JSON.parse(jsonString);
-for (let person of persons) {
-    for(let key in person){
-        console.log(`${key}: ${person[key]}`);
+        return filterModelDeta;
     }
-    console.log("-----")
+
+    // ramデータの本数に対応して取得
+    static filterRamModelData(ramSelectNumber, brandName, data) {
+        const listData = data[brandName];
+        let filterData = listData.filter(word => word.includes(ramSelectNumber + 'x'));
+        return filterData;
+    }
+
+
 }
 
+function main() {
+    Controller.start();
 
-
-// JSONのドキュメンテーションを読みましょう。
-// https://developer.mozilla.org/ja/docs/Learn/JavaScript/Objects/JSON
-/*
-const jsonString = `
-    [{
-        "model": "Tesla X",
-        "brand": "Tesla",
-        "price": "$100k",
-        "year": 2018
-    },
-    {
-        "model": "Civic",
-        "brand": "Honda",
-        "price": "$30k",
-        "year": 2016
-    },
-    {
-        "model": "Cayenne",
-        "brand": "Porsche",
-        "price": "$80k",
-        "year": 2020
-    }]
-`;
-
-const cars = JSON.parse(jsonString);
-
-// for-of構文を使って、配列の全要素のJSONデータにアクセスを行うことができます。
-// ドキュメンテーションを読むことをおすすめします。
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/for...of
-for (let car of cars) {
-    console.log(car);
-    console.log(car.model);
-    console.log(car.brand);
-    console.log(car.price);
-    console.log(car.year);
 }
 
-
-// JSONはkeyとvalueによって構成されます。
-const jsonString = `
-    {
-        "model": "Tesla X",
-        "brand": "Tesla",
-        "price": "$100k",
-        "year": 2018
-    }
-`;
-
-// JSON.parse()メソッドは文字列をJSONとして解析し、文字列によって記述されているJavaScriptの値やオブジェクトを構築します。
-const car = JSON.parse(jsonString);
-
-// carという変数とアクセス演算子を用いて、JSONのデータにアクセス
-console.log(car.model);
-console.log(car.year);
-*/
+main();
