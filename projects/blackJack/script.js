@@ -124,6 +124,8 @@ class Player{
 
         // プレイヤーのゲームの状態やアクションを表します。
         // ブラックジャックの場合、最初の状態は「betting」です。
+        //  bet, surrender, stand, hit, double
+        // bettiong, actiong, hit
         this.gameStatus = 'betting';
     }
 
@@ -132,12 +134,23 @@ class Player{
         ?Number userData: モデル外から渡されるパラメータ。nullになることもあります。
         return GameDecision: 状態を考慮した上で、プレイヤーが行った意思決定。
     */
-    promptPlayer(userData)
-    {
+    promptPlayer(userData){
         //TODO: ここからコードを書きましょう
+        let gameDecision = null; 
+        if (userData.type == "user") {
+            if (userData.gameStatus === "betting") {
+                gameDecision = new gameDecision("bet", Controller.getTotalBetValue());
+                return gameDecision;
+            }
+
+        
+        } else if (userData == null) {
+            gameDecision = new gameDecision("bet", Controller.getTotalBetValue());
+
+        }
         
 
-        return GameDecision;
+        return gameDecision;
     }
 
     winAmount() {
@@ -159,6 +172,9 @@ class GameDecision{
         String action: プレイヤーのアクションの選択（ブラックジャックでは、hit、stand等）
         Number amount: プレイヤーが選択する数値
         Player.promptPlayer() メソッドが常に GameDecision オブジェクトを返します
+
+        bet, surrender, stand, hit, double
+        betting, acting, hit
     */
     constructor(action, amount){
         // アクション
@@ -191,13 +207,16 @@ class Table {
         this.players = []
         
         // プレイヤーをここで初期化してください。
-        this.house = new Player('house', 'house', this.gameType);
+
+        // 一旦ここでプレイヤーを作成
 
         // "betting", "acting", "evaluatingWinners", "gameOver"
         this.gamePhase = 'betting'
 
         // これは各ラウンドの結果をログに記録するための文字列の配列です。
         this.resultsLog = [];
+
+        this.turnCounter = 0;
 
     }
 
@@ -217,12 +236,34 @@ class Table {
     }
     
     /*
-        Player player : テーブルは、Player.promptPlayer()を使用してGameDecisionを取得し、GameDecisionとgameTypeに応じてPlayerの状態を更新します。
+        Player player : テーブルは、Player.promptPlayer()を使用してGameDecisionを取得し、
+                                    GameDecisionとgameTypeに応じてPlayerの状態を更新します。
         return Null : このメソッドは、プレーヤの状態を更新するだけです。
         例.プレイヤーが「ヒット」し、手札が21以上の場合、gameStatusを「バスト」に設定し、チップからベットを引きます。
+        bet, surrender, stand, hit, double
     */
     evaluateMove(Player){
         //TODO: ここからコードを書きましょう
+        let gameDicision = Player.promptPlayer();
+        if (gameDicision.action == "bet") {
+            player.bet = gameDicision.amount;
+            player.gamePhase = "acting";
+        }
+        /*
+        switch (gameDicision.action) {
+            case "bat":
+                break;
+            case "surrender":
+                break;
+            case "stand":
+                break:
+            case "hit":
+                break;
+            case "double":
+                break;
+        }
+        */
+
     }
 
     /*
@@ -231,14 +272,27 @@ class Table {
 
     getTurnPlayer(){
         //TODO: ここからコードを書きましょう
+        //return this.players[this.turnCounter % this.players.length];
+        return this.players[2];
+
     }
 
     /*
        Number userData: テーブルモデルの外部から渡されるデータです。 
        return null: このメソッドはテーブルの状態を更新するだけで、値を返しません。
     */
+    // "betting", "acting", "evaluatingWinners", "gameOver"
     haveTurn(userData){
         //TODO: ここからコードを書きましょう
+        const currentPlayer = this.getTurnPlayer;
+
+        if (this.gamePhase == "betting") {
+            if (currentPlayer.type == "user") {
+                this.evaluateMove(currentPlayer);
+
+            }
+
+        }
     }
 
     /*
@@ -275,7 +329,17 @@ class Table {
 class View{
 
     constructor() {
-        this.gameDiv = document.querySelector("#gameDiv");
+        this.gameDiv = document.querySelectorAll("#gameDiv")[0];
+        this.images = {
+            path: "img/",
+            images: {
+                heart: "heart.png",
+                spade: "spade.png",
+                clover: "clover.png",
+                diamond: "diamond.png",
+                question: "questionMark.png"
+            }
+        };
     }
 
     clear() {
@@ -507,172 +571,137 @@ class View{
         this.gameDiv.innerHTML = markup;
     }
 
-    createBetPhaseView() {
+    createBettingView(table) {
+        const players = {};
+        for (let i in table.players) {
+            if (table.players[i].type == "user") {
+                players[table.players[i].type] = table.players[i];
+            } else {
+                players[table.players[i].name] = table.players[i];
+            }
+        }
+
+
+        // function: createCardDiv functin
+        function createCardWrapperDiv  (funcCreateCardDiv)  {
+            let cardWrapperDiv = document.createElement("div");  
+            cardWrapperDiv.classList.add("d-flex", "justify-content-center");
+
+            // カード２枚生成
+            cardWrapperDiv.append(funcCreateCardDiv(), funcCreateCardDiv());
+            return cardWrapperDiv;
+        }
+
+        const createCardDiv = () => {
+            let cardDiv = document.createElement("div");
+            cardDiv.classList.add("bg-white", "border", "mx-2");
+            let cardImageDiv = document.createElement("div");
+            cardImageDiv.classList.add("text-center");
+            let cardImageImg = document.createElement("img");
+            cardImageImg.src = this.images.path + this.images.images.question;
+            cardImageImg.alt = "";
+            cardImageImg.width = "50";
+            cardImageImg.height = "50";
+            let cardNumberDiv = document.createElement("div");
+            cardNumberDiv.classList.add("text-center");
+            let cardNumberP = document.createElement("p");
+            cardNumberP.classList.add("m-0");
+            cardNumberP.innerHTML = "-";
+
+            cardNumberDiv.append(cardNumberP);
+            cardImageDiv.append(cardImageImg);
+            cardDiv.append( cardImageDiv, cardNumberDiv);
+            return cardDiv;
+       }
+
+       function createPlayerInfoDiv(currentPlayer) {
+            let playerInfoDiv = document.createElement("div");  
+            playerInfoDiv.classList.add("text-white", "d-flex", "m-0", "p-0", "justify-content-between");
+            let phaseP = document.createElement("p");
+            phaseP.value = currentPlayer.gameStatus;
+            let bettingChipP = document.createElement("p");
+            bettingChipP.value = currentPlayer.bet;
+            let chipsP = document.createElement("p");
+            chipsP.value = currentPlayer.chips;
+
+            playerInfoDiv.append(phaseP, bettingChipP, chipsP);
+            return playerInfoDiv;
+
+        }
+
+        let div = document.createElement("div");
+        div.classList.add("col-12");
+        // create PlayerCard
+        let playersDiv = document.createElement("div"); 
+        playersDiv.id = "playersDiv";
+        playersDiv.classList.add("d-flex", "justify-content-center");
+
+        let playerWrapperDiv = document.createElement("div");
+        for (let i in players) {
+            const currentPlayer = players[i];
+
+            if (currentPlayer.type == "ai") {
+                let nonCurPlayerDiv = document.createElement("div"); 
+                nonCurPlayerDiv.id = "noncurplayer1div";
+                nonCurPlayerDiv.classList.add("flex-column");
+
+                // create playerName
+                let playerNameP = document.createElement("p"); 
+                playerNameP.classList.add("m-0", "text-white", "text-center", "rem3");
+                playerNameP.innerText = currentPlayer.name;
+
+                // create playerInfo
+                let playerInfoDiv = createPlayerInfoDiv(currentPlayer);
+
+                // create card
+                let cardWrapperDiv = createCardWrapperDiv(createCardDiv);  
+
+                nonCurPlayerDiv.append(playerNameP, playerInfoDiv, cardWrapperDiv );
+                playersDiv.append(nonCurPlayerDiv);
+
+            } else if (currentPlayer.type == "house") {
+                let houseDiv = document.createElement("div");
+                houseDiv.classList.add("pt-5");
+                let houseNameP = document.createElement("p");
+                houseNameP.classList.add("m-0", "text-center", "text-white", "rem3");
+                houseNameP.innerText = currentPlayer.name;
+
+
+                let cardWrapperDiv = document.createElement("div");
+                cardWrapperDiv.id = "houseCardDiv";
+                cardWrapperDiv.classList.add("d-flex", "justify-content-center", "pt-3", "pb-5");
+                cardWrapperDiv.append(createCardDiv(), createCardDiv());
+
+                houseDiv.append(houseNameP, cardWrapperDiv);
+                div.insertAdjacentElement("afterbegin", houseDiv);
+
+            } else {
+                // playerDiv
+                let curplayerdiv = document.createElement("div");
+                curplayerdiv.classList.add("flex-column", "w-50");
+                curplayerdiv.id = "curPlayerDiv";
+
+                // nameP
+                let playerNameP = document.createElement("p");
+                playerNameP.classList.add("m-0", "text-white", "text-center", "rem3");
+                playerNameP.innerText = currentPlayer.name;
+
+                //playerInfo
+                let playerInfoDiv = createPlayerInfoDiv(currentPlayer);
+
+                // create card
+                let cardWrapperDiv = createCardWrapperDiv(createCardDiv);  
+
+                curplayerdiv.append(playerNameP, playerInfoDiv, cardWrapperDiv);
+                playersDiv.append(curplayerdiv);
+
+            }
+        }
+
+
+
+
         let markup = `
-        <!--gamedisplay2-->
-                <!-- all cards (dealer, players) div -->
-                <div class="col-12">
-                    <div class="pt-5">
-                        <p class="m-0 text-center text-white rem3">dealer</p>
-            
-                        <!-- house card row -->
-                        <div id="houescarddiv" class="d-flex justify-content-center pt-3 pb-5">
-            
-                            <div class="bg-white border mx-2">
-                                <div class="text-center">
-                                    <img src="/img/spade.png" alt="" width="50" height="50">
-                                </div>
-                                <div class="text-center">
-                                    <p class="m-0 ">7</p>
-                                </div>
-                            </div>
-            
-                            <div class="bg-white border mx-2">
-                                <div class="text-center">
-                                    <img src="/img/diamond.png" alt="" width="50" height="50">
-                                </div>
-                                <div class="text-center">
-                                    <p class="m-0">8</p>
-                                </div>
-                            </div>
-            
-                            <div class="bg-white border mx-2">
-                                <div class="text-center">
-                                    <img src="/img/heart.png" alt="" width="50" height="50">
-                                </div>
-                                <div class="text-center">
-                                    <p class="m-0">9</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            
-                    <div class="">
-            
-                        <!-- players div -->
-                        <div id="playersdiv" class="d-flex justify-content-center">
-            
-                            <!-- noncurplayerdiv 1-->
-                            <div id="noncurplayer1div" class="flex-column">
-            
-                                <p class="m-0 text-white text-center rem3">ai1</p>
-            
-                                <!-- playerinfodiv -->
-                                <div class="text-white d-flex m-0 p-0 justify-content-between">
-                                    <p class="rem1 text-left">s:bust </a>
-                                    <p class="rem1 text-left">b:0 </a>
-                                    <p class="rem1 text-left">r:255 </a>
-                                </div>
-                                <!-- cardsdiv -->
-                                <div class="d-flex justify-content-center">
-                                    <div class="bg-white border mx-2">
-                                        <div class="text-center">
-                                            <img src="/img/heart.png" alt="" width="50" height="50">
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="m-0">2</p>
-                                        </div>
-                                    </div>
-                                    <div class="bg-white border mx-2">
-                                        <div class="text-center">
-                                            <img src="/img/clover.png" alt="" width="50" height="50">
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="m-0">10</p>
-                                        </div>
-                                    </div>
-                                    <div class="bg-white border mx-2">
-                                        <div class="text-center">
-                                            <img src="/img/spade.png" alt="" width="50" height="50">
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="m-0">8</p>
-                                        </div>
-                                    </div><!-- end card -->
-                                </div><!-- end cards -->
-                            </div><!-- end player -->
-            
-                            <!-- curplayerdiv -->
-                            <div id = "curplayerdiv" class="flex-column w-50">
-                                <p class="m-0 text-white text-center rem3">ai2</p>
-            
-                                <!-- playerinfodiv -->
-                                <div class="text-white d-flex m-0 p-0 justify-content-center">
-                                    <p class="rem1 text-left">s:bust </a>
-                                    <p class="rem1 text-left">b:0 </a>
-                                    <p class="rem1 text-left">r:255 </a>
-                                </div>
-            
-                                <!-- cardsdiv -->
-                                <div class="d-flex justify-content-center">
-                                    <div class="bg-white border mx-2">
-                                        <div class="text-center">
-                                            <img src="/img/heart.png" alt="" width="50" height="50">
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="m-0">2</p>
-                                        </div>
-                                    </div>
-                                    <div class="bg-white border mx-2">
-                                        <div class="text-center">
-                                            <img src="/img/clover.png" alt="" width="50" height="50">
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="m-0">10</p>
-                                        </div>
-                                    </div>
-                                    <div class="bg-white border mx-2">
-                                        <div class="text-center">
-                                            <img src="/img/spade.png" alt="" width="50" height="50">
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="m-0">8</p>
-                                        </div>
-                                    </div><!-- end card -->
-                                </div><!-- end cards -->
-                            </div><!-- end player -->
-            
-                            <!-- noncurplayer2div -->
-                            <div id="noncurplayer2div" class="flex-column">
-            
-                                <p class="m-0 text-white text-center rem3">yuki</p>
-            
-                                <!-- playerinfodiv -->
-                                <div class="text-white d-flex m-0 p-0 justify-content-between">
-                                    <p class="rem1 text-left">s:bust </a>
-                                    <p class="rem1 text-left">b:0 </a>
-                                    <p class="rem1 text-left">r:255 </a>
-                                </div>
-            
-                                <!-- cardsdiv -->
-                                <div class="d-flex justify-content-center">
-                                    <div class="bg-white border mx-2">
-                                        <div class="text-center">
-                                            <img src="/img/heart.png" alt="" width="50" height="50">
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="m-0">2</p>
-                                        </div>
-                                    </div>
-                                    <div class="bg-white border mx-2">
-                                        <div class="text-center">
-                                            <img src="/img/clover.png" alt="" width="50" height="50">
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="m-0">10</p>
-                                        </div>
-                                    </div>
-                                    <div class="bg-white border mx-2">
-                                        <div class="text-center">
-                                            <img src="/img/spade.png" alt="" width="50" height="50">
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="m-0">8</p>
-                                        </div>
-                                    </div><!-- end card -->
-                                </div><!-- end cards -->
-                            </div><!-- end player -->
-                        </div><!-- end players -->
             
                         <!-- actionsandbetsdiv -->
                         <div id="actionsandbetsdiv" class="d-flex pb-5 pt-4 justify-content-center">
@@ -762,7 +791,20 @@ class View{
         `;
 
         this.clear();
-        this.gameDiv.innerHTML = markup;
+        playerWrapperDiv.append(playersDiv);
+        div.append(playerWrapperDiv);
+        div.innerHTML += markup;
+        this.gameDiv.append(div);
+
+    }
+
+
+    redrawSubmitBetBtn(totalBet) {
+        let submitBetBtn = document.getElementById("betsdiv").lastElementChild;
+        let text = submitBetBtn.innerText.split(" ").slice(0, 3);
+        text = text.join(" ") + " " + totalBet;
+        
+        submitBetBtn.innerText = text;
     }
 
 }
@@ -776,70 +818,142 @@ class Controller{
 
 
     init(){
-        this.view.createLoginView();
+        //this.view.createLoginView();
         this.gameStart();
 
     }
 
     gameStart() {
         const gameStartBtn = document.getElementById("startBtn");
+        /*
         gameStartBtn.addEventListener("click", () => {
-            const userName = document.getElementById("getUserName");
+            //const userName = document.getElementById("getUserName").value;
+            const userName = "aa";
             const selectGame = document.getElementById("selectGame");
-            this.players = this.createPlayerToHouseAndAi(userName, selectGame);
-            let table = new Table();
-            this.gameBetView();
-            this.renderTable();
+            let table = new Table(selectGame, userName);
+            let house = new Player('house', 'house', this.gameType);
+            let player = null;
+            if (userName != "ai") {
+                player = new Player(userName , "user", this.gameType);
+            } else {
+                player = new Player("ai2", "ai", this.gameType);
+            }
+            let ai1 = new Player("ai1", "ai", this.gemeType);
+            let ai2 = new Player("ai3", "ai", this.gemeType);
+            table.players.push(house);
+            table.players.push(ai1);
+            table.players.push(player);
+            table.players.push(ai2);
+            this.renderTable(table);
         });
-
-    }
-
-    gameView() {
-        this.view.createGameView();
-    }
-
-    gameBetView() {
-        this.view.createBetPhaseView();
+        */
+       // test
+            const userName = "aa";
+            const selectGame = document.getElementById("selectGame");
+            let table = new Table(selectGame, userName);
+            let house = new Player('house', 'house', this.gameType);
+            let player = null;
+            if (userName != "ai") {
+                player = new Player(userName , "user", this.gameType);
+            } else {
+                player = new Player("ai2", "ai", this.gameType);
+            }
+            let ai1 = new Player("ai1", "ai", this.gemeType);
+            let ai2 = new Player("ai3", "ai", this.gemeType);
+            table.players.push(house);
+            table.players.push(ai1);
+            table.players.push(player);
+            table.players.push(ai2);
+            this.renderTable(table);
+            this.getBettingChips(this.view);
     }
 
 
     renderTable(table) {
 
-        if (table.getTurnPlayer.type == "user") {
+        let currentPlayer = table.getTurnPlayer();
+        if (currentPlayer.type == "user") {
+
+            if (table.gamePhase == "betting") {
+                this.view.createBettingView(table);
+                table.haveTurn();
+
+                this.clickSubmitBet();
+            } else if (table.gamePhase == "acting") {
+
+            }
 
             
         } else {
-            setTimeout(function () {
+            setTimeout(function ()  {
                 table.haveTurn();
                 this.renderTable(table);
             }, 5000);
         }
     }
 
-    createPlayerToHouseAndAi(userName = null, selectGame) {
-        // playerTypeは　{al, user, house}の３つ
-        if (userName === null) return alert("名前を入力して下さい");
+    getBettingChips(view) {
+        let betInputGroup = document.querySelectorAll(".input-group");
+        betInputGroup.forEach((betInput) => {
+            let btnNegative = betInput.querySelector(".btn-danger");
+            let btnPositive = betInput.querySelector(".btn-success");
+            let inputElement = betInput.querySelector(".input-number");
 
-        let players = {};
-        let house = new Player("house", "house", selectGame)
-        players["house"] = house;
+            let value = inputElement.value;
 
-        // aiの場合はプレイヤーはaiのみ
-        if (userName == "ai") {
-            for (let i = 0; i <= 3; i++){
-                players["ai" + i] = new Player("ai" + i, "ai", selectGame);
-            }
-        } else {
-        // playerとaiを作成
-            for (let i = 0; i <= 2; i++){
-                players["ai" + i] = new Player("ai" + i, "ai", selectGame);
-            };
-            let player = new Player(userNmae, "user", selectGame);
-            players["player"] = player;
-        }
+            btnPositive.addEventListener('click', function () {
+                value++;
+                inputElement.value = value;
+                view.redrawSubmitBetBtn(Controller.getTotalBetValue());
+            });
 
-        return players;
+            btnNegative.addEventListener("click", function () {
+                if (value > 0) {
+                    value--;
+                    inputElement.value = value;
+                    view.redrawSubmitBetBtn(Controller.getTotalBetValue());
+                }
+            })
+        });
     }
+
+    clickSubmitBet() {
+        const submitBetbtn = document.getElementById("betsdiv").lastElementChild;
+        submitBetbtn.addEventListener("click", function () {
+            const totalBet = Controller.getTotalBetValue();
+            console.log("bet submit");
+            return totalBet;
+        });
+
+    }
+
+    static getTotalBetValue() {
+        const inputGourp = document.querySelectorAll(".input-group");
+        let value = 0;
+        inputGourp.forEach((el) => {
+            let betValue = el.nextElementSibling.innerText; 
+            let count = parseInt(el.querySelector(".input-number").value);
+            switch (betValue) {
+                case "5":
+                    value += 5 * count;
+                    break;
+                case "20":
+                    value += 20 * count;
+                    break;
+                case "50":
+                    value += 50 * count;
+                    break;
+
+                case "100":
+                    value += 100 * count;
+                    break;
+            };
+
+        });
+        return value;
+    }
+    
+
 }
 
 function main() {
