@@ -361,7 +361,7 @@ class Game {
             playerName,
             20,
             0,
-            1000000000000000,
+            1000000,
             items,
         );
 

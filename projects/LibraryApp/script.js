@@ -179,10 +179,7 @@ class View{
 
 }
 
-class Model{
-
-    
-}
+//class Model{}
 
 class Controller{
     static start() {
