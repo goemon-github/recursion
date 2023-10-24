@@ -50,7 +50,6 @@ class BankAccount{
     }
 
     simulateTimePassage(days) {
-        let daysPerYear = 365;
         let profit = (this.money * Math.pow(1 + this.annualRate,  days / 365)) - this.money;
         this.money += profit;
         console.log(this.money, profit);
@@ -67,7 +66,6 @@ function getRandomInteger(min, max) {
 }
 
 function initializeUserAccount() {
-    event.preventDefault();
      form = document.getElementById('bank-form');
     let userBankAccount = new BankAccount(
         form.querySelectorAll(`input[name="userFirstName"]`).item(0).value,
@@ -77,12 +75,22 @@ function initializeUserAccount() {
         getRandomInteger(1, Math.pow(10, 8)),
         parseInt(form.querySelectorAll(`input[name="userFirstDeposit"]`).item(0).value)
     );
+    
     console.log(userBankAccount);
 
 /* 2pageの表示 */
-    config.initialForm.classList.add('d-none');
-    config.bankPage.append(mainBankPage(userBankAccount));
 
+    config.bankPage.append(mainBankPage(userBankAccount));
+    config.initialForm.classList.add('d-none');
+
+}
+
+function getUserInfo() {
+    let submitBtn = document.getElementsByTagName('button')[0];
+    submitBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        initializeUserAccount();
+    })
 }
 
 function mainBankPage(bankAccount) {
@@ -95,9 +103,9 @@ function mainBankPage(bankAccount) {
     let bankIdP = nameP.cloneNode(true);
     let initialDepositP = nameP.cloneNode(true);
 
-    nameP.innerHTML = bankAccount.getFullName();
-    bankIdP.innerHTML = bankAccount.accountNumber;
-    initialDepositP = bankAccount.initialDeposit;
+    nameP.innerHTML = `Name: ${bankAccount.getFullName()}`;
+    bankIdP.innerHTML = `ID: ${bankAccount.accountNumber}`;
+    initialDepositP = `Deposit: ${bankAccount.initialDeposit}`;
 
     infoContainer.append(nameP, bankIdP, initialDepositP);
 
@@ -161,37 +169,37 @@ function billInputSelector(title) {
         <div class="form-group row">
             <label for="moneyWithdraw100" class="col-2 col-form-label col-form-label-sm">$100</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="100" id="moneyWithdraw100" placeholder="5">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="100" id="moneyWithdraw100" placeholder="0">
             </div>
         </div>
         <div class="form-group row">
             <label for="moneyWithdraw50" class="col-2 col-form-label col-form-label-sm">$50</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="50" id="moneyWithdraw50" placeholder="1">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="50" id="moneyWithdraw50" placeholder="0">
             </div>
         </div>
         <div class="form-group row">
             <label for="moneyWithdraw20" class="col-2 col-form-label col-form-label-sm">$20</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="20" id="moneyWithdraw20" placeholder="2">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="20" id="moneyWithdraw20" placeholder="0">
             </div>
         </div>
         <div class="form-group row">
             <label for="moneyWithdraw10" class="col-2 col-form-label col-form-label-sm">$10</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="10" id="moneyWithdraw10" placeholder="3">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="10" id="moneyWithdraw10" placeholder="0">
             </div>
         </div>
         <div class="form-group row">
             <label for="moneyWithdraw5" class="col-2 col-form-label col-form-label-sm">$5</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="5" id="moneyWithdraw5" placeholder="1">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="5" id="moneyWithdraw5" placeholder="0">
             </div>
         </div>
         <div class="form-group row">
             <label for="moneyWithdraw1" class="col-2 col-form-label col-form-label-sm">$1</label>
             <div class="col-10">
-                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="1" id="moneyWithdraw1" placeholder="4">
+                <input type="number" class="form-control form-control-sm text-right withdraw-bill bill-input" data-bill="1" id="moneyWithdraw1" placeholder="0">
             </div>
         </div>
         <div class="text-center money-box p-3">
@@ -376,7 +384,7 @@ function comeBackLaterPage(bankAccount) {
     comeBackLaterContainer.innerHTML = `
         <h2 class="pb-3">${title}</h2>
         <div class="form-group">
-            <input type="number" class="form-control" id="days-gone" placeholder="4">
+            <input type="number" class="form-control" id="days-gone" placeholder="0">
         </div>
     `;
 
@@ -458,3 +466,8 @@ console.log(user1);
 let user2 = new BankAccount("Jameson", "Dorsey", "jameson.dorsey@gmail.com", "saving", getRandomInteger(1,Math.pow(10,8)), "90");
 console.log(user2);
 */
+
+function main() {
+    getUserInfo();
+}
+main();
