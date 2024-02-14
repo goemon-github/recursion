@@ -128,8 +128,6 @@ class Player{
         // bettiong, actiong, hit
         this.gameStatus = 'betting';
     }
-
-
     /*
         ?Number userData: モデル外から渡されるパラメータ。nullになることもあります。
         return GameDecision: 状態を考慮した上で、プレイヤーが行った意思決定。
@@ -139,13 +137,13 @@ class Player{
         let gameDecision = null; 
         if (userData.type == "user") {
             if (userData.gameStatus === "betting") {
-                gameDecision = new gameDecision("bet", Controller.getTotalBetValue());
+                gameDecision = new GameDecision("bet", Controller.getTotalBetValue());
                 return gameDecision;
             }
 
         
         } else if (userData == null) {
-            gameDecision = new gameDecision("bet", Controller.getTotalBetValue());
+            gameDecision = new GameDecision("bet", Controller.getTotalBetValue());
 
         }
         
@@ -172,11 +170,9 @@ class GameDecision{
         String action: プレイヤーのアクションの選択（ブラックジャックでは、hit、stand等）
         Number amount: プレイヤーが選択する数値
         Player.promptPlayer() メソッドが常に GameDecision オブジェクトを返します
-
-        bet, surrender, stand, hit, double
-        betting, acting, hit
     */
-    constructor(action, amount){
+    constructor(action, amount)
+    {
         // アクション
         this.action = action
         
@@ -184,6 +180,7 @@ class GameDecision{
         this.amount = amount
     }
 }
+
 
 
 class Table {
@@ -242,12 +239,12 @@ class Table {
         例.プレイヤーが「ヒット」し、手札が21以上の場合、gameStatusを「バスト」に設定し、チップからベットを引きます。
         bet, surrender, stand, hit, double
     */
-    evaluateMove(Player){
+    evaluateMove(player){
         //TODO: ここからコードを書きましょう
-        let gameDicision = Player.promptPlayer();
+        let gameDicision = player.promptPlayer(player);
         if (gameDicision.action == "bet") {
             player.bet = gameDicision.amount;
-            player.gamePhase = "acting";
+            player.gameStatus = "acting";
         }
         /*
         switch (gameDicision.action) {
@@ -284,12 +281,10 @@ class Table {
     // "betting", "acting", "evaluatingWinners", "gameOver"
     haveTurn(userData){
         //TODO: ここからコードを書きましょう
-        const currentPlayer = this.getTurnPlayer;
-
+        const currentPlayer = this.getTurnPlayer();
         if (this.gamePhase == "betting") {
             if (currentPlayer.type == "user") {
                 this.evaluateMove(currentPlayer);
-
             }
 
         }
