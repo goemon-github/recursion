@@ -36,33 +36,6 @@ class Server:
         
 
 
-
-
-
-        """
-        {
-            "method": "subtract", 
-            "params": [42, 23], 
-            "param_types": [int, int],
-            "id": 1
-        }
-
-
-
-        def testFunc(self):
-            print('floor: ' + str(functions.floor(4)))
-            print('nroot: ' + str(functions.nroot(2, 2)))
-            print('revese: ' + functions.reverse('hello'))
-            print('validAnagram: ' + str(functions.validAnagram('hello', 'world')))
-            #print('sort: ' + functions.sort(['hello', 'world', 'test']))
-            functions.sort(['hello', 'world', 'test'])
-        """
-
-    
-
-
-
-
 if __name__ == "__main__":
     server = Server('127.0.0.1',12345)    
     server.run()

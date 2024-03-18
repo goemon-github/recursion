@@ -89,12 +89,25 @@ async function createRequest(){
     //console.log('methodを[floor, nroot, reverse, validanagran, sort] から選んでください')
     const method = await inputMethod();
     const params =  await inputParams(method);
+    const paramsType = await createParamsTypeHashMap(method);
     readLine.close();
     requestTemplate['method'] = String(method);
     requestTemplate['params'] = params;
-    requestTemplate['params_type'] = typeof(params);
-    requestTemplate['id'] = 100;
+    requestTemplate['params_type'] = paramsType;
+    requestTemplate['id'] = Math.floor(Math.random() * 10);
 
     template_json = JSON.stringify(requestTemplate);
     return template_json
+}
+
+function createParamsTypeHashMap(method){
+    paramsTypeHashMap = {
+        'floor': 'float',
+        'nroot': '[int, int]',
+        'reverse': 'string',
+        'anagram': '[string, string]',
+        'sort': 'string[]'
+    }
+
+    return paramsTypeHashMap[method];
 }

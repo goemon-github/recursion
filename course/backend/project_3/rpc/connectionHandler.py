@@ -6,6 +6,9 @@ class ConnectionHandler:
     def __init__(self, connection, client_address) :
         self.connection = connection
         self.client_address = client_address
+        self.funcHashMap = self.create_fumc_hashmap()
+        self.paramsCheckTypeHashMap = self.create_prams_checktype_hashmap()
+        self.responceParamsTypeHashMap = self.create_responce_params_type_hashmap()
 
     
     def handle(self):
@@ -26,12 +29,67 @@ class ConnectionHandler:
             print('Close cureent connection')
             self.connection.close()
 
+    
+    def create_fumc_hashmap(self):
+        funcHashMap = {
+            'floor': functions.floor,
+            'nroot': functions.nroot,
+            'reverse': functions.reverse,
+            'anagram': functions.validAnagram,
+            'sort': functions.sort
+        }
+        return funcHashMap
+
+    def create_prams_checktype_hashmap(self):
+        paramsCheckTypeHashMap = {
+            'floor': 'float',
+            'nroot': '[int, int]',
+            'reverse': 'string',
+            'anagram': '[string, string]',
+            'sort': 'stirng[]'
+        }
+        return paramsCheckTypeHashMap
+    
+    def create_responce_params_type_hashmap(self):
+        responceParamsTypeHashMap= {
+            'floor': 'int',
+            'nroot': 'float',
+            'reverse': 'string',
+            'anagram': '[string, string]',
+            'sort': 'stirng[]'
+        }
+        return responceParamsTypeHashMap
+
 
     def handle_rpc_request(self, request):
         method = request.get("method")
         params = request.get("params") 
+        params_type = request.get('params_type')
+        id =  request.get('id')
 
-        responce = ''
+        if(type(params) != params_type):
+            if(params_type == 'int'):
+                params = int(params)
+            elif(params_type == 'float'):
+                params = float(params)
+
+
+        if method == 'nroot':
+            n, x = params.split(' ')
+            params = [n, x]
+
+        elif method == 'anagram':
+            str1, str2 = params.split(' ')
+            params = [str1, str2]
+
+        elif method == 'sort':
+            responce = functions.sort(params)
+
+        responceResult = self.funcHashMap[method](params)
+        responceResultType = self.responceParamsTypeHashMap[method]
+
+
+        """
         if method == 'floor':
             responce = functions.floor(int(params))
 
@@ -49,11 +107,12 @@ class ConnectionHandler:
 
         elif method == 'sort':
             responce = functions.sort(params)
+        """
 
         data = {
-            'results': str(responce),
-            'result_type': type(responce).__name__,
-            'id': request.get('id')
+            'results': responceResult,
+            'result_type': responceResultType,
+            'id':id 
         }
         return data
 

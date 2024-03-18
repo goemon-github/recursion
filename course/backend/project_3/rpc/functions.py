@@ -3,14 +3,16 @@ import math
 def floor(x):
     return math.floor(x)
 
-def nroot(n, x):
-    return math.pow(x, 1/n)
+def nroot(arr):
+    n, x = arr
+    return math.pow(int(x), 1/int(n))
 
 def reverse(s):
     x = s[::-1]
     return x
 
-def validAnagram(str1, str2):
+def validAnagram(arr):
+    str1, str2 = arr
     sorted_str1 = sorted(str1)
     sorted_str2 = sorted(str2)
     print(sorted_str1)
