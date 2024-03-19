@@ -17,7 +17,6 @@ class ConnectionHandler:
             while True:
                 data = self.connection.recv(4096)
                 if data:
-                    #data_str = data.decode('utf-8')
                     parse_request = json.loads(data) 
                     print(f'request: {parse_request}')
                     responce = self.handle_rpc_request(parse_request)
@@ -82,32 +81,10 @@ class ConnectionHandler:
             str1, str2 = params.split(' ')
             params = [str1, str2]
 
-        elif method == 'sort':
-            responce = functions.sort(params)
 
         responceResult = self.funcHashMap[method](params)
         responceResultType = self.responceParamsTypeHashMap[method]
 
-
-        """
-        if method == 'floor':
-            responce = functions.floor(int(params))
-
-        elif method == 'nroot':
-
-            n, x = params.split(' ')
-            responce = functions.nroot(int(n), int(x))
-
-        elif method == 'reverse':
-            responce = functions.reverse(params)
-
-        elif method == 'anagram':
-            str1, str2 = params.split(' ')
-            responce = functions.validAnagram(str1, str2)
-
-        elif method == 'sort':
-            responce = functions.sort(params)
-        """
 
         data = {
             'results': responceResult,

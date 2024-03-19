@@ -86,7 +86,6 @@ async function createRequest(){
         "params_type": '',
         "id": '',
     }
-    //console.log('methodを[floor, nroot, reverse, validanagran, sort] から選んでください')
     const method = await inputMethod();
     const params =  await inputParams(method);
     const paramsType = await createParamsTypeHashMap(method);
