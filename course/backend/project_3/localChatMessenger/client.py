@@ -1,8 +1,5 @@
 import socket
 import sys
-from faker import Faker
-
-fake = Faker()
 
 sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
