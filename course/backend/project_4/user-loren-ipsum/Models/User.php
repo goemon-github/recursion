@@ -15,8 +15,6 @@ class User {
     private DateTime $birthDate;
     private DateTime $membershipExpirationDate;
     private string $role;
-    private bool $isActive;
-    private string $password;
 
     public function __construct(
         int $id, string $firstName, string $lastName, string $email,

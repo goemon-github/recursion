@@ -40,9 +40,14 @@ $users = RandomGenerator::users($min, $max);
     <?php foreach ($users as $user): ?>
     <div class="user-card">
         <!-- ユーザー情報の表示 -->
-        <?php echo $user->toHTML() ?>
+        <?php // echo $user->toHTML() ?>
     </div>
     <?php endforeach; ?>
 
+    <form action="/submit-data" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name">
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>
