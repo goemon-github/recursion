@@ -1,3 +1,0 @@
-"Hello dear world, this message was sent from Jupiter"
-
-Appending more text to this file

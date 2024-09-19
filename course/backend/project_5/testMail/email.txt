@@ -1,0 +1,10 @@
+ubject: Hello World
+To: booya.8108@gmail.com
+From: SpaceApp keiichiro.sugiyama91@gmail.com
+
+Hello,
+
+This is the body of your email.
+
+Best regards,
+Your Name
