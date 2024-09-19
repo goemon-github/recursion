@@ -404,6 +404,16 @@ return [
             // ユーザーログイン
             Authenticate::loginAsUser($user);
 
+            // queryPrametersを作成
+            $lasts = 1 * 60 * 30;
+            $queryParameters = [
+                'id' => $user->getId(),
+                'user'=> hash('sha256', $user->getEmail()),
+                'expiration' => time() + $lasts,
+            ];
+            $signedUrl = Route::create('verify/email', function(){})->getSignedURL();
+
+
             FlashData::setFlashData('success', 'Account successfully created.');
             return new RedirectRenderer('random/part');
         } catch (\InvalidArgumentException $e) {
@@ -626,4 +636,86 @@ return [
 
         return new JSONRenderer(['url'=>Route::create('test/share/files/jpg', function(){})->getSignedURL($validatedData)]);
     }),
+
+    // Email System
+    "verify/email"=>Route::create("verify/email", function():HTTPRenderer {
+        try{
+
+
+            // ログインしているユーザーを取得
+            $currentUser = Authenticate::getAuthenticatedUser();
+
+
+            // 検証用
+            $lasts = 1 * 60 * 30;
+            $queryParameters = [
+                'id' => $currentUser->getId(),
+                'user'=> hash('sha256', $currentUser->getEmail()),
+                'expiration' => time() + $lasts,
+            ];
+
+            $testUrl = Route::create('verify/email', function(){}) -> getSignedURL($queryParameters);
+
+            $t = strstr($testUrl, 'signature='); 
+            $t2 = substr($t, strlen('signature='));
+            $queryParameters['signature'] = substr(strstr($testUrl, 'signature='), strlen('signature=')) ;
+            error_log('routes 検証用------');
+            error_log(var_export($queryParameters, true));
+
+
+
+            // URLからユーザー情報を取得
+            $testUser = [
+                $id = $_GET['id'],
+                $user = $_GET['user'],
+                $expiration = $_GET['expiration'],
+                $signature = $_GET['signature']
+            ];
+            error_log('routes testUser------');
+            error_log(var_export($testUser, true));
+
+            $required_fields = [
+                'id' => ValueType::INT,
+                'user' => ValueType::STRING,
+            ];
+
+            $validateData = ValidationHelper::validateFields($required_fields, $_GET);
+
+
+            if(!$currentUser) {
+                throw new Exception('user not found');
+            }
+
+            // ユーザーの詳細が URL パラメータと一致していることを確認します
+            if(
+                $currentUser->getId() !== $validateData['id'] ||
+                $validateData['user'] !== hash('sha256', $currentUser->getEmail())
+            ){
+                FlashData::setFlashData('error', 'The URL  is incorrect or no longer valid');
+                return new RedirectRenderer('random/part');
+
+            }
+
+            // email_verifiedを更新
+            $currentUser->setEmailVerified(true);
+            $userDAO = DAOFactory::getUserDAO();
+            $userDAO->updateEmailVerified($currentUser);
+
+            // 証明書付きURLを発行(30分で期限切れになるように設定)
+
+            // emailを送信
+
+            
+
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+
+            FlashData::setFlashData('error', 'An error occurred.');
+            return new RedirectRenderer('register');
+        }
+
+        
+        return new HTMLRenderer('component/emailVerifiedPage');
+    })->setMiddleware(['signature']),
+
 ];

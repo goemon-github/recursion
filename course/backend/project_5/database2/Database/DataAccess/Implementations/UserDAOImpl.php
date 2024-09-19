@@ -88,4 +88,29 @@ class UserDAOImpl implements UserDAO
     {
         return $this->getRawById($id)['password']??null;
     }
+
+    public function updateEmailVerified(User $user){
+        $mysqli = DatabaseManager::getMysqliConnection();
+
+        $query = 
+            <<< SQL
+                update users
+                set email_verified = ?
+                where id = ? 
+            SQL;
+
+
+        $result = $mysqli->prepareAndExecute(
+            $query,
+            "ii",
+            [
+            $user->getEmailVerified(),
+            $user->getId()
+            ]
+        );
+
+        if(!$result) return false;
+
+        return true;
+    }
 }

@@ -148,6 +148,7 @@ if (isset($routes[$path])) {
 
         // 配列連結ミドルウェア
         $middlewareRegister = include('Middleware/middleware-register.php');
+
         $middlewares = array_merge($middlewareRegister['global'], array_map(fn ($routeAlias) => $middlewareRegister['aliases'][$routeAlias], $route->getMiddleware()));
 
         $middlewareHandler = new \Middleware\MiddlewareHandler(array_map(fn($middlewareClass) => new $middlewareClass(), $middlewares));

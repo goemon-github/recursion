@@ -33,6 +33,7 @@ class Authenticate
         if(!isset($_SESSION[self::USER_ID_SESSION_KEY])) return;
         $userDao = DAOFactory::getUserDAO();
         self::$authenticatedUser = $userDao->getById($_SESSION[self::USER_ID_SESSION_KEY]);
+
     }
 
     public static function isLoggedIn(): bool{

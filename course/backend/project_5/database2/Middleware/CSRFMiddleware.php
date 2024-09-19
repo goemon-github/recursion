@@ -22,6 +22,7 @@ class CSRFMiddleware implements Middleware
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
             if ($_POST['csrf_token'] !== $token) {
                 FlashData::setFlashData('error', 'Access has been denied.');
+                error_log('CSRF middleware------');
                 return new RedirectRenderer('random/part');
             }
         }

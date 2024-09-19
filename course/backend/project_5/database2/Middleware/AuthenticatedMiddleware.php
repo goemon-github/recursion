@@ -20,3 +20,7 @@ class AuthenticatedMiddleware implements Middleware
         return $next();
     }
 }
+ミドルウェアを介して URL 署名をチェックします。
+ミドルウェアを通してリンクが期限切れでないことを確認します。
+ルート内で、ユーザーの詳細が URL パラメータと一致していることを確認します。
+ルート内で、データベースの email_verified 列を更新します。

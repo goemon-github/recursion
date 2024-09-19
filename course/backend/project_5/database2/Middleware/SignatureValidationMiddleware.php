@@ -40,7 +40,6 @@ class SignatureValidationMiddleware implements Middleware
 
         // 現在のパスのRouteオブジェクトを作成します。
         $route = Route::create($pathWithoutQuery, function(){});
-
         // URLに有効な署名があるかチェックします。
         if ($route->isSignedURLValid($_SERVER['HTTP_HOST'] . $currentPath)) {
             // 有効期限があるかどうかを確認し、有効期限がある場合は有効期限が切れていないことを確認します。

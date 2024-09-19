@@ -95,4 +95,5 @@ class Route
 
         return hash_equals($expectedSignature, $signature);
     }
+
 }
