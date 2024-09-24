@@ -10,17 +10,27 @@ use Response\Render\RedirectRenderer;
 class AuthenticatedMiddleware implements Middleware
 {
     public function handle(callable $next): HTTPRenderer
+    
     {
         error_log('Running authentication check...');
+
+        // ユーザーがログインしていない場合
         if(!Authenticate::isLoggedIn()){
             FlashData::setFlashData('error', 'Must login to view this page.');
             return new RedirectRenderer('login');
+            
+        
+        //userのemail_verifiedがfalseの場合 
+        }else if(!Authenticate::isEmailVerified()){
+            $parse_url= parse_url($_SERVER['REQUEST_URI']);
+            $path = trim($parse_url['path'], '/');
+
+            $deniedPaths = ['logout','verify/resend', 'form/verify/resend' ];
+            if(!in_array($path, $deniedPaths)){
+                return new RedirectRenderer('verify/resend');
+            }
         }
 
         return $next();
     }
 }
-ミドルウェアを介して URL 署名をチェックします。
-ミドルウェアを通してリンクが期限切れでないことを確認します。
-ルート内で、ユーザーの詳細が URL パラメータと一致していることを確認します。
-ルート内で、データベースの email_verified 列を更新します。

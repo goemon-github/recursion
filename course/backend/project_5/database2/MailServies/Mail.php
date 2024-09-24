@@ -6,28 +6,23 @@ use Helpers\Settings;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require "./vender/autoload.php";
+//require "vender/autoload.php";
+
+require_once 'vendor/autoload.php';
 
 class Mail {
-
-    public function __construct (){
-        $this->host = Settings::env('MAIL_HOST');
-        $this->username = Settings::env('MAIL_USERNAME');
-    }
 
     private function getMailServer(): PHPMailer{
         $mail = new PHPMailer(true);
         
         try{
-            $mail->Host       = $this->host;                 
+            $mail->Host       = Settings::env('MAIL_HOST');
             $mail->SMTPAuth   = true;                             
-            $mail->Username   = $this->username;
+            $mail->Username   = Settings::env('MAIL_USERNAME');
             $mail->Password   = $this->getPassword();               
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;   
             $mail->Port       = 587;                              
 
-            // パスワードをメモリ上から削除
-            $this->password = null;
 
             return $mail;
 
@@ -42,8 +37,9 @@ class Mail {
         return Settings::env('MAIL_PASSWORD');
     }
 
+    // メールを送信
     public function sendVerificationEmail(string $toEmail, string $url ){
-            $mail = getMailServer();
+            $mail = $this->getMailServer();
         try{
 
             $mail->setFrom($mail->Username, 'Email Verified');
@@ -54,20 +50,27 @@ class Mail {
             // HTMLコンテンツ
             $mail->isHTML(true);
             ob_start();
-            include('Message/verificationEmail-template.php');
+            include(__DIR__.'/Message/VerificationEmail-template.php');
             $mail->Body = ob_get_clean();
 
-            if(file_exists('Message/text/verificationEmail.txt')){
-                $mail->AltBody = file_get_contents('Message/text/verificationEmail.txt');
+            // Textコンテンツ
+            if(file_exists(__DIR__.'/Message/text/verificationEmail.txt')){
+                $mail->AltBody = file_get_contents(__DIR__.'/Message/text/verificationEmail.txt');
             }else {
                 throw new Exception("Text Email template not found");
             }
 
-            $isSent = $mail->send();
-            return $isSent;
+            $isSend = $mail->send();
+
+            if(!$isSend){
+                throw new Exception("error: Failed to send verification email");
+            }
+            return $isSend;
+
+
         }catch(Exception $e){
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-            error_log("Mailer Error: {$mail->ErrorInfo}");
+            echo "Message could not be sent. Mailer Error:" . $mail->ErrorInfo;
+            error_log("Mailer Error: ". $mail->ErrorInfo);
             return false;
         }
     }

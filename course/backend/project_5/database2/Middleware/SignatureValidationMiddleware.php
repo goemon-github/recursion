@@ -38,6 +38,7 @@ class SignatureValidationMiddleware implements Middleware
         $parsedUrl = parse_url($currentPath);
         $pathWithoutQuery = $parsedUrl['path'] ?? '';
 
+
         // 現在のパスのRouteオブジェクトを作成します。
         $route = Route::create($pathWithoutQuery, function(){});
         // URLに有効な署名があるかチェックします。
@@ -45,7 +46,8 @@ class SignatureValidationMiddleware implements Middleware
             // 有効期限があるかどうかを確認し、有効期限がある場合は有効期限が切れていないことを確認します。
             if(isset($_GET['expiration']) && ValidationHelper::integer($_GET['expiration']) < time()){
                 FlashData::setFlashData('error', "The URL has expired.");
-                return new RedirectRenderer('random/part');
+                //return new RedirectRenderer('random/part');
+                return new RedirectRenderer('verify/resend');
             }
 
             // 署名が有効であれば、ミドルウェアチェインを進めます。

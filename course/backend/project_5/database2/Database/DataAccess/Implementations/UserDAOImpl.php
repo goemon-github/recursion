@@ -58,12 +58,20 @@ class UserDAOImpl implements UserDAO
         return $result;
     }
 
+    /*
+    private function getRawByEmailVerified(): ?bool{
+        $mysqli = DatabaseManager::getMysqliConnection();
+        $query = "SELECT * FROM users WHERE email_verified = ?";
+    }
+    */
+
     private function rawDataToUser(array $rawData): User{
         return new User(
             username: $rawData['username'],
             email: $rawData['email'],
             id: $rawData['id'],
             company: $rawData['company'] ?? null,
+            emailVerified: $rawData['email_verified'],
             timeStamp: new DataTimeStamp($rawData['created_at'], $rawData['updated_at'])
         );
     }
@@ -89,9 +97,9 @@ class UserDAOImpl implements UserDAO
         return $this->getRawById($id)['password']??null;
     }
 
+
     public function updateEmailVerified(User $user){
         $mysqli = DatabaseManager::getMysqliConnection();
-
         $query = 
             <<< SQL
                 update users
@@ -109,8 +117,34 @@ class UserDAOImpl implements UserDAO
             ]
         );
 
-        if(!$result) return false;
+        if(!$result) throw new Exception("Falied to update emali Verified: " . user->getId());
 
-        return true;
+        return $result;
+    }
+
+    public function updateEmail(User $user): bool{
+        $mysqli = DatabaseManager::getMysqliConnection();
+
+        $query = 
+            <<< SQL
+                update users
+                set email = ?
+                where id = ? 
+            SQL;
+
+
+        $result = $mysqli->prepareAndExecute(
+            $query,
+            "si",
+            [
+            $user->getEmail(),
+            $user->getId()
+            ]
+        );
+
+        if(!$result) throw new Exception("Falied to update emali for UserID: " . user->getId());
+
+        return $result;
+
     }
 }

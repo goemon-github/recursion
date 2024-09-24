@@ -64,6 +64,16 @@ class User implements Model {
     }
 
     public function getEmailVerified(): bool {
-        return $this->emailVerified;
+        return $this->emailVerified ;
+    }
+
+    public function generateSignedURLQueryParams(int $time = 30): array {
+        $lasts = 1 * 60 * $time;
+        $queryParameters = [
+            'id' => $this->getId(),
+            'user'=> hash('sha256', $this->getEmail()),
+            'expiration' => time() + $lasts,
+        ];
+        return $queryParameters;
     }
 }

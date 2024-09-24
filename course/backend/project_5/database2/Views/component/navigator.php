@@ -31,30 +31,6 @@
                         <a class="nav-link" href="/register">Register</a>
                     </li>
                 <?php endif; ?>
-
-                <?php
-                    use Helpers\Authenticate;
-                    use Routing\Route;
-                    $user = Authenticate::getAuthenticatedUser();
-
-                    $lasts = 1 * 60 * 30;
-                    $queryParameters = [
-                        'id' => $user->getId(),
-                        'user'=> hash('sha256', $user->getEmail()),
-                        'expiration' => time() + $lasts,
-                    ];
-
-                    $testUrl = Route::create('verify/email', function(){}) -> getSignedURL($queryParameters);
-
-                    $t = strstr($testUrl, 'signature='); 
-                    $t2 = substr($t, strlen('signature='));
-                    $queryParameters['signature'] = substr(strstr($testUrl, 'signature='), strlen('signature=')) ;
-                    $testUrl = '/verify/email?id='.$queryParameters['id'].'&user='.$queryParameters['user'].'&expiration='.$queryParameters['expiration'].'&signature='.$queryParameters['signature'];
-                ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $testUrl?> "> [ TEST verify/email ] </a>
-                </li>
-
             </ul>
         </div>
     </div>

@@ -1,0 +1,16 @@
+    TITLE: computer parts URL LINK
+    
+    署名付きURL
+
+    以下のリンクをクリックし、メールアドレスの認証を行ってください
+    <?php echo htmlspecialchars($url, ENT_QUOTES, 'utf-8')?>
+
+
+    Recursion
+    Project-5
+    Email Verification System
+
+    このメールはテストメールです
+
+         
+    2024 Recursion Inc

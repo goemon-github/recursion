@@ -46,6 +46,15 @@ class Authenticate
         return self::$authenticatedUser;
     }
 
+    // email_verified: bool を取得
+    public static function isEmailVerified(): bool{
+        self::retrieveAuthenticatedUser();
+        if(!self::isLoggedIn()) {
+            return false;
+        }
+        return self::$authenticatedUser->getEmailVerified();
+    }
+
     /**
      * @throws AuthenticationFailureException
      */
@@ -65,4 +74,6 @@ class Authenticate
         }
         else throw new AuthenticationFailureException("Invalid password.");
     }
+
+
 }
